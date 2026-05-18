@@ -1,0 +1,28 @@
+--- a/pkgs/by-name/gi/gitlab/update.py
++++ b/pkgs/by-name/gi/gitlab/update.py
+@@ -307,6 +307,16 @@ def update_gitlab_workhorse():
+     _call_nix_update("gitlab-workhorse", gitlab_workhorse_version)
+
+
++def omnibus_container_registry_version(rev: str):
++    repo = GitLabRepo(repo="omnibus-gitlab")
++    repo.version_regex = re.compile(r"^\d+\.\d+\.\d+\+ee\.\d+")
++    version = repo.rev2version(rev)
++    repo.search = f"{version}*ee"
++    rev = next(filter(lambda x: x.startswith(version), repo.tags))
++    config = repo.get_file('config/software/registry.rb', rev)
++    return re.compile(r"v\d+\.\d+\.\d+\-gitlab").search(config)[0]
++
++
+ @cli.command("update-gitlab-container-registry")
+ @click.option("--rev", default="latest", help="The rev to use (vX.Y.Z-ee), or 'latest'")
+ @click.option(
+@@ -320,6 +330,8 @@ def update_gitlab_container_registry(rev: str, commit: bool):
+
+     if rev == "latest":
+         rev = next(filter(lambda x: not ("rc" in x or x.endswith("pre")), repo.tags))
++    else:
++        rev = omnibus_container_registry_version(rev)
+
+     version = repo.rev2version(rev)
+     _call_nix_update("gitlab-container-registry", version)

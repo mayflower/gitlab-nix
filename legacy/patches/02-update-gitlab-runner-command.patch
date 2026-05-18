@@ -1,0 +1,89 @@
+--- a/pkgs/by-name/gi/gitlab/update.py
++++ b/pkgs/by-name/gi/gitlab/update.py
+@@ -289,6 +289,23 @@ def get_container_registry_version() -> str:
+     ).decode("utf-8")
+
+
++def get_gitlab_runner_version() -> str:
++    """Returns the version attribute of gitlab-runner"""
++    return subprocess.check_output(
++        [
++            "nix",
++            "--experimental-features",
++            "nix-command",
++            "eval",
++            "-f",
++            ".",
++            "--raw",
++            "gitlab-runner.version",
++        ],
++        cwd=NIXPKGS_PATH,
++    ).decode("utf-8")
++
++
+ @cli.command("update-gitlab-shell")
+ def update_gitlab_shell():
+     """Update gitlab-shell"""
+@@ -330,6 +347,35 @@ def update_gitlab_container_registry(rev: str, commit: bool):
+         )
+
+
++@cli.command("update-gitlab-runner")
++@click.option("--rev", default="latest", help="The rev to use (vX.Y.Z-ee), or 'latest'")
++@click.option(
++    "--commit", is_flag=True, default=False, help="Commit the changes for you"
++)
++def update_gitlab_runner(rev: str, commit: bool):
++    """Update gitlab-runner"""
++    logger.info("Updating gitlab-runner")
++    repo = GitLabRepo(repo="gitlab-runner")
++    old_gitlab_runner_version = get_gitlab_runner_version()
++
++    if rev == "latest":
++        rev = next(filter(lambda x: not ("rc" in x or x.endswith("pre")), repo.tags))
++    else:
++        parts = repo.rev2version(rev).split('.')
++        major, minor, patch = parts[0], parts[1], parts[2]
++        repo.search = f"v{major}.{minor}.*"
++        upper = Version(f"{major}.{minor}.{patch}")
++        rev = next(filter(lambda x: Version(x) <= upper and not ("rc" in x or x.endswith("pre")), repo.tags))
++
++    version = repo.rev2version(rev)
++    _call_nix_update("gitlab-runner", version)
++    if commit:
++        new_gitlab_runner_version = get_gitlab_runner_version()
++        commit_gitlab_runner(
++            old_gitlab_runner_version, new_gitlab_runner_version
++        )
++
++
+ @cli.command('update-gitlab-elasticsearch-indexer')
+ def update_gitlab_elasticsearch_indexer():
+     """Update gitlab-elasticsearch-indexer"""
+@@ -417,5 +463,26 @@ def commit_container_registry(old_version: str, new_version: str) -> None:
+     )
+
+
++def commit_gitlab_runner(old_version: str, new_version: str) -> None:
++    """Commits the gitlab-runner changes for you"""
++    subprocess.run(
++        [
++            "git",
++            "add",
++            "pkgs/by-name/gi/gitlab-runner"
++        ],
++        cwd=NIXPKGS_PATH,
++    )
++    subprocess.run(
++        [
++            "git",
++            "commit",
++            "--message",
++            f"gitlab-runner: {old_version} -> {new_version}\n\nhttps://gitlab.com/gitlab-org/gitlab-runner/-/blob/v{new_version}/CHANGELOG.md",
++        ],
++        cwd=NIXPKGS_PATH,
++    )
++
++
+ if __name__ == "__main__":
+     cli()

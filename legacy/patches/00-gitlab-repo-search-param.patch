@@ -1,0 +1,14 @@
+--- a/pkgs/by-name/gi/gitlab/update.py
++++ b/pkgs/by-name/gi/gitlab/update.py
+@@ -35,7 +35,10 @@ class GitLabRepo:
+     @property
+     def tags(self) -> Iterable[str]:
+         """Returns a sorted list of repository tags"""
+-        r = requests.get(self.url + "/refs?sort=updated_desc&ref=master").json()
++        url = self.url + "/refs?sort=updated_desc&ref=master"
++        if getattr(self, "search", None):
++            url += f"&search={self.search}"
++        r = requests.get(url).json()
+         tags = r.get("Tags", [])
+
+         # filter out versions not matching version_regex
