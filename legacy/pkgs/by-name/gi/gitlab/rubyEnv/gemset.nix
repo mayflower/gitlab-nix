@@ -2778,8 +2778,11 @@ src: {
     dependencies = [
       "activerecord"
       "activesupport"
+      "aws-sdk-core"
       "connection_pool"
       "elasticsearch"
+      "faraday-typhoeus"
+      "faraday_middleware-aws-sigv4"
       "opensearch-ruby"
       "pg"
       "zeitwerk"
@@ -2924,10 +2927,10 @@ src: {
     platforms = [ ];
     source = {
       remotes = [ "https://rubygems.org" ];
-      sha256 = "1acbwzi4dkixfmb2rggzf4pg65cyxhbggrs4642p8y7mf0hpraii";
+      sha256 = "02rnrd403hp5hwgvrapl3mvqp6gzr422v81wwq8dlzm38bjqd2v7";
       type = "gem";
     };
-    version = "2.2.0";
+    version = "2.4.0";
   };
   gitlab-glfm-markdown = {
     dependencies = [ "rb_sys" ];
@@ -8111,10 +8114,10 @@ src: {
     platforms = [ ];
     source = {
       remotes = [ "https://rubygems.org" ];
-      sha256 = "0vgsvdaglz1spx9gxrr6xh7qqhi4qd8jd06h2ihwxmazj9ajld6y";
+      sha256 = "01wi1csw4kjmlxmd1igx5hj2wrwkslay1xamg4cv8l7imr27l3hv";
       type = "gem";
     };
-    version = "1.18.0";
+    version = "1.18.1";
   };
   ruby-statistics = {
     groups = [
