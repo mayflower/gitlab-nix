@@ -21,7 +21,10 @@ frontend proxy:
     virtualHosts."git.example.com" = {
       enableACME = true;
       forceSSL = true;
-      locations."/".proxyPass = "http://unix:/run/gitlab/gitlab-workhorse.socket";
+      locations."/" = {
+        proxyPass = "http://unix:/run/gitlab/gitlab-workhorse.socket";
+        proxyWebsockets = true;
+      };
     };
   };
 }
@@ -39,7 +42,7 @@ all data like the repositories and uploads will be stored.
 A basic configuration with some custom settings could look like this:
 ```nix
 {
-  services.gitlab-nix = {
+  services.gitlab = {
     enable = true;
     databasePasswordFile = "/var/keys/gitlab/db_password";
     initialRootPasswordFile = "/var/keys/gitlab/root_password";
@@ -78,26 +81,26 @@ secrets. You for instance use
 `tr -dc A-Za-z0-9 < /dev/urandom | head -c 128 > /var/keys/gitlab/db` to
 generate a new db secret. Make sure the files can be read by, and
 only by, the user specified by
-[services.gitlab-nix.user](#opt-services.gitlab-nix.user). GitLab
+[services.gitlab.user](#opt-services.gitlab.user). GitLab
 encrypts sensitive data stored in the database. If you're restoring
 an existing GitLab instance, you must specify the secrets secret
 from `config/secrets.yml` located in your GitLab
 state folder.
 
 When `incoming_mail.enabled` is set to `true`
-in [extraConfig](#opt-services.gitlab-nix.extraConfig) an additional
+in [extraConfig](#opt-services.gitlab.extraConfig) an additional
 service called `gitlab-mailroom` is enabled for fetching incoming mail.
 
 Refer to [](#ch-options) for all available configuration
-options for the [services.gitlab-nix](#opt-services.gitlab-nix.enable) module.
+options for the [services.gitlab](#opt-services.gitlab.enable) module.
 
 ## Maintenance {#module-services-gitlab-maintenance}
 
 ### Backups {#module-services-gitlab-maintenance-backups}
 
 Backups can be configured with the options in
-[services.gitlab-nix.backup](#opt-services.gitlab-nix.backup.keepTime). Use
-the [services.gitlab-nix.backup.startAt](#opt-services.gitlab-nix.backup.startAt)
+[services.gitlab.backup](#opt-services.gitlab.backup.keepTime). Use
+the [services.gitlab.backup.startAt](#opt-services.gitlab.backup.startAt)
 option to configure regular backups.
 
 To run a manual backup, start the `gitlab-backup` service:
