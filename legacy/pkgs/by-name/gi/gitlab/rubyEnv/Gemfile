@@ -179,7 +179,7 @@ gem 'gitlab-topology-service-client', '~> 0.1',
   feature_category: :cell
 
 # Duo Workflow
-gem 'gitlab-duo-workflow-service-client', '~> 0.4',
+gem 'gitlab-duo-workflow-service-client', '~> 0.6',
   path: 'vendor/gems/gitlab-duo-workflow-service-client',
   feature_category: :agent_foundations
 
@@ -274,7 +274,7 @@ gem 'asciidoctor-kroki', '~> 0.10.0', require: false, feature_category: :markdow
 gem 'rouge', '~> 4.6.1', feature_category: :shared
 gem 'truncato', '~> 0.7.13', feature_category: :team_planning
 gem 'nokogiri', '~> 1.18', feature_category: :shared
-gem 'gitlab-glfm-markdown', '~> 0.0.38', feature_category: :markdown
+gem 'gitlab-glfm-markdown', '~> 0.0.39', feature_category: :markdown
 gem 'tanuki_emoji', '~> 0.13', feature_category: :markdown
 gem 'unicode-emoji', '~> 4.0', feature_category: :markdown
 
