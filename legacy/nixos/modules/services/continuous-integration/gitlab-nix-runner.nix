@@ -852,48 +852,48 @@ in
   };
   imports = [
     (mkRenamedOptionModule
-      [ "services" "gitlab-runner" "packages" ]
-      [ "services" "gitlab-runner" "extraPackages" ]
+      [ "services" "gitlab-nix-runner" "packages" ]
+      [ "services" "gitlab-nix-runner" "extraPackages" ]
     )
     (mkRemovedOptionModule [
       "services"
-      "gitlab-runner"
+      "gitlab-nix-runner"
       "configOptions"
     ] "Use services.gitlab-nix-runner.services option instead")
     (mkRemovedOptionModule [
       "services"
-      "gitlab-runner"
+      "gitlab-nix-runner"
       "workDir"
     ] "You should move contents of workDir (if any) to /var/lib/gitlab-runner")
 
     (mkRenamedOptionModule
-      [ "services" "gitlab-runner" "checkInterval" ]
-      [ "services" "gitlab-runner" "settings" "check_interval" ]
+      [ "services" "gitlab-nix-runner" "checkInterval" ]
+      [ "services" "gitlab-nix-runner" "settings" "check_interval" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-runner" "concurrent" ]
-      [ "services" "gitlab-runner" "settings" "concurrent" ]
+      [ "services" "gitlab-nix-runner" "concurrent" ]
+      [ "services" "gitlab-nix-runner" "settings" "concurrent" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-runner" "sentryDSN" ]
-      [ "services" "gitlab-runner" "settings" "sentry_dsn" ]
+      [ "services" "gitlab-nix-runner" "sentryDSN" ]
+      [ "services" "gitlab-nix-runner" "settings" "sentry_dsn" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-runner" "prometheusListenAddress" ]
-      [ "services" "gitlab-runner" "settings" "listen_address" ]
+      [ "services" "gitlab-nix-runner" "prometheusListenAddress" ]
+      [ "services" "gitlab-nix-runner" "settings" "listen_address" ]
     )
 
     (mkRenamedOptionModule
-      [ "services" "gitlab-runner" "sessionServer" "listenAddress" ]
-      [ "services" "gitlab-runner" "settings" "session_server" "listen_address" ]
+      [ "services" "gitlab-nix-runner" "sessionServer" "listenAddress" ]
+      [ "services" "gitlab-nix-runner" "settings" "session_server" "listen_address" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-runner" "sessionServer" "advertiseAddress" ]
-      [ "services" "gitlab-runner" "settings" "session_server" "advertise_address" ]
+      [ "services" "gitlab-nix-runner" "sessionServer" "advertiseAddress" ]
+      [ "services" "gitlab-nix-runner" "settings" "session_server" "advertise_address" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-runner" "sessionServer" "sessionTimeout" ]
-      [ "services" "gitlab-runner" "settings" "session_server" "session_timeout" ]
+      [ "services" "gitlab-nix-runner" "sessionServer" "sessionTimeout" ]
+      [ "services" "gitlab-nix-runner" "settings" "session_server" "session_timeout" ]
     )
   ];
 

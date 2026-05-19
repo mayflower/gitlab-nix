@@ -279,18 +279,18 @@ in
 {
 
   imports = [
-    (mkRenamedOptionModule [ "services" "gitlab" "stateDir" ] [ "services" "gitlab" "statePath" ])
-    (mkRenamedOptionModule [ "services" "gitlab" "backupPath" ] [ "services" "gitlab" "backup" "path" ])
-    (mkRemovedOptionModule [ "services" "gitlab" "satelliteDir" ] "")
+    (mkRenamedOptionModule [ "services" "gitlab-nix" "stateDir" ] [ "services" "gitlab-nix" "statePath" ])
+    (mkRenamedOptionModule [ "services" "gitlab-nix" "backupPath" ] [ "services" "gitlab-nix" "backup" "path" ])
+    (mkRemovedOptionModule [ "services" "gitlab-nix" "satelliteDir" ] "")
     (mkRemovedOptionModule [
       "services"
-      "gitlab"
+      "gitlab-nix"
       "logrotate"
       "extraConfig"
     ] "Modify services.logrotate.settings.gitlab directly instead")
     (mkRemovedOptionModule [
       "services"
-      "gitlab"
+      "gitlab-nix"
       "pagesExtraArgs"
     ] "Use services.gitlab-nix.pages.settings instead")
   ];
