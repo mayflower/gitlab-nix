@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#! nix-shell -I nixpkgs=../../../.. -i python3 -p bundix bundler nix-update nix python3 python3Packages.requests python3Packages.click python3Packages.click-log python3Packages.packaging prefetch-yarn-deps git
+#! nix-shell -I nixpkgs=../../../.. -i python3 -p bundix bundler nix-update nix python3 python3Packages.requests python3Packages.click python3Packages.click-log python3Packages.packaging prefetch-yarn-deps git go
 
 import click
 import click_log
@@ -22,7 +22,7 @@ click_log.basic_config(logger)
 
 
 class GitLabRepo:
-    version_regex = re.compile(r"^v\d+\.\d+\.\d+(\-rc\d+)?(\-ee)?(\-gitlab)?")
+    version_regex = re.compile(r"^v\d+\.\d+\.\d+(\-rc\d+)?(\-ee)?(\-gitlab)?$")
 
     def __init__(self, owner: str = "gitlab-org", repo: str = "gitlab"):
         self.owner = owner
@@ -35,10 +35,7 @@ class GitLabRepo:
     @property
     def tags(self) -> Iterable[str]:
         """Returns a sorted list of repository tags"""
-        url = self.url + "/refs?sort=updated_desc&ref=master"
-        if getattr(self, "search", None):
-            url += f"&search={self.search}"
-        r = requests.get(url).json()
+        r = requests.get(self.url + "/refs?sort=updated_desc&ref=master").json()
         tags = r.get("Tags", [])
 
         # filter out versions not matching version_regex
@@ -47,7 +44,7 @@ class GitLabRepo:
         # sort, but ignore v, -ee and -gitlab for sorting comparisons
         versions.sort(
             key=lambda x: Version(
-                x.replace("v", "").replace("-ee", "").replace("-gitlab", "").replace("-ahmed-master-test", "")
+                x.replace("v", "").replace("-ee", "").replace("-gitlab", "")
             ),
             reverse=True,
         )
@@ -65,10 +62,10 @@ class GitLabRepo:
             .strip()
         )
 
-    def get_yarn_hash(self, rev: str):
+    def get_yarn_hash(self, rev: str, yarn_lock_path="yarn.lock"):
         with tempfile.TemporaryDirectory() as tmp_dir:
             with open(tmp_dir + "/yarn.lock", "w") as f:
-                f.write(self.get_file("yarn.lock", rev))
+                f.write(self.get_file(yarn_lock_path, rev))
             return (
                 subprocess.check_output(["prefetch-yarn-deps", tmp_dir + "/yarn.lock"])
                 .decode("utf-8")
@@ -115,6 +112,7 @@ class GitLabRepo:
             version=self.rev2version(rev),
             repo_hash=self.get_git_hash(rev),
             yarn_hash=self.get_yarn_hash(rev),
+            frontend_islands_yarn_hash=self.get_yarn_hash(rev, "/ee/frontend_islands/apps/duo_next/yarn.lock"),
             owner=self.owner,
             repo=self.repo,
             rev=rev,
@@ -292,23 +290,6 @@ def get_container_registry_version() -> str:
     ).decode("utf-8")
 
 
-def get_gitlab_runner_version() -> str:
-    """Returns the version attribute of gitlab-runner"""
-    return subprocess.check_output(
-        [
-            "nix",
-            "--experimental-features",
-            "nix-command",
-            "eval",
-            "-f",
-            ".",
-            "--raw",
-            "gitlab-runner.version",
-        ],
-        cwd=NIXPKGS_PATH,
-    ).decode("utf-8")
-
-
 @cli.command("update-gitlab-shell")
 def update_gitlab_shell():
     """Update gitlab-shell"""
@@ -327,16 +308,6 @@ def update_gitlab_workhorse():
     _call_nix_update("gitlab-workhorse", gitlab_workhorse_version)
 
 
-def omnibus_container_registry_version(rev: str):
-    repo = GitLabRepo(repo="omnibus-gitlab")
-    repo.version_regex = re.compile(r"^\d+\.\d+\.\d+\+ee\.\d+")
-    version = repo.rev2version(rev)
-    repo.search = f"{version}*ee"
-    rev = next(filter(lambda x: x.startswith(version), repo.tags))
-    config = repo.get_file('config/software/registry.rb', rev)
-    return re.compile(r"v\d+\.\d+\.\d+\-gitlab").search(config)[0]
-
-
 @cli.command("update-gitlab-container-registry")
 @click.option("--rev", default="latest", help="The rev to use (vX.Y.Z-ee), or 'latest'")
 @click.option(
@@ -350,49 +321,13 @@ def update_gitlab_container_registry(rev: str, commit: bool):
 
     if rev == "latest":
         rev = next(filter(lambda x: not ("rc" in x or x.endswith("pre")), repo.tags))
-    else:
-        rev = omnibus_container_registry_version(rev)
 
     version = repo.rev2version(rev)
-    pkg = NIXPKGS_PATH / "pkgs/by-name/gi/gitlab-container-registry/package.nix"
-    pkg.write_text(
-        re.sub(r'rev = "v\$\{version\}-[^"]+";',
-               'rev = "v${version}-gitlab";', pkg.read_text())
-    )
     _call_nix_update("gitlab-container-registry", version)
     if commit:
         new_container_registry_version = get_container_registry_version()
         commit_container_registry(
             old_container_registry_version, new_container_registry_version
-        )
-
-
-@cli.command("update-gitlab-runner")
-@click.option("--rev", default="latest", help="The rev to use (vX.Y.Z-ee), or 'latest'")
-@click.option(
-    "--commit", is_flag=True, default=False, help="Commit the changes for you"
-)
-def update_gitlab_runner(rev: str, commit: bool):
-    """Update gitlab-runner"""
-    logger.info("Updating gitlab-runner")
-    repo = GitLabRepo(repo="gitlab-runner")
-    old_gitlab_runner_version = get_gitlab_runner_version()
-
-    if rev == "latest":
-        rev = next(filter(lambda x: not ("rc" in x or x.endswith("pre")), repo.tags))
-    else:
-        parts = repo.rev2version(rev).split('.')
-        major, minor, patch = parts[0], parts[1], parts[2]
-        repo.search = f"v{major}.{minor}.*"
-        upper = Version(f"{major}.{minor}.{patch}")
-        rev = next(filter(lambda x: Version(x) <= upper and not ("rc" in x or x.endswith("pre")), repo.tags))
-
-    version = repo.rev2version(rev)
-    _call_nix_update("gitlab-runner", version)
-    if commit:
-        new_gitlab_runner_version = get_gitlab_runner_version()
-        commit_gitlab_runner(
-            old_gitlab_runner_version, new_gitlab_runner_version
         )
 
 
@@ -402,6 +337,29 @@ def update_gitlab_elasticsearch_indexer():
     data = _get_data_json()
     gitlab_elasticsearch_indexer_version = data['passthru']['GITLAB_ELASTICSEARCH_INDEXER_VERSION']
     _call_nix_update('gitlab-elasticsearch-indexer', gitlab_elasticsearch_indexer_version)
+    # Update the dependency gitlab-code-parser
+    src_workdir = subprocess.check_output(
+        [
+            "nix-build",
+            "-A",
+            "gitlab-elasticsearch-indexer.src",
+        ],
+        cwd=NIXPKGS_PATH,
+    ).decode("utf-8").strip()
+    codeparser_module = json.loads(
+        subprocess.check_output(
+            [
+                "go",
+                "list",
+                "-m",
+                "-json",
+                "gitlab.com/gitlab-org/rust/gitlab-code-parser/bindings/go"
+            ],
+            cwd=src_workdir
+        ).decode("utf-8").strip()
+    )
+    codeparser_version = codeparser_module["Version"].replace("v", "")
+    _call_nix_update('gitlab-elasticsearch-indexer.codeParserBindings', codeparser_version)
 
 
 @cli.command("update-all")
@@ -413,6 +371,7 @@ def update_gitlab_elasticsearch_indexer():
 def update_all(ctx, rev: str, commit: bool):
     """Update all gitlab components to the latest stable release"""
     old_data_json = _get_data_json()
+    old_container_registry_version = get_container_registry_version()
 
     ctx.invoke(update_data, rev=rev)
 
@@ -429,8 +388,12 @@ def update_all(ctx, rev: str, commit: bool):
             old_data_json["version"], new_data_json["version"], new_data_json["rev"]
         )
 
-    ctx.invoke(update_gitlab_container_registry, rev=rev, commit=commit)
-    ctx.invoke(update_gitlab_runner, rev=rev, commit=commit)
+    ctx.invoke(update_gitlab_container_registry)
+    if commit:
+        new_container_registry_version = get_container_registry_version()
+        commit_container_registry(
+            old_container_registry_version, new_container_registry_version
+        )
 
 
 def commit_gitlab(old_version: str, new_version: str, new_rev: str) -> None:
@@ -473,27 +436,6 @@ def commit_container_registry(old_version: str, new_version: str) -> None:
             "commit",
             "--message",
             f"gitlab-container-registry: {old_version} -> {new_version}\n\nhttps://gitlab.com/gitlab-org/container-registry/-/blob/v{new_version}-gitlab/CHANGELOG.md",
-        ],
-        cwd=NIXPKGS_PATH,
-    )
-
-
-def commit_gitlab_runner(old_version: str, new_version: str) -> None:
-    """Commits the gitlab-runner changes for you"""
-    subprocess.run(
-        [
-            "git",
-            "add",
-            "pkgs/by-name/gi/gitlab-runner"
-        ],
-        cwd=NIXPKGS_PATH,
-    )
-    subprocess.run(
-        [
-            "git",
-            "commit",
-            "--message",
-            f"gitlab-runner: {old_version} -> {new_version}\n\nhttps://gitlab.com/gitlab-org/gitlab-runner/-/blob/v{new_version}/CHANGELOG.md",
         ],
         cwd=NIXPKGS_PATH,
     )

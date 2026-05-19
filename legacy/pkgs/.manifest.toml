@@ -1,12 +1,12 @@
-source = "github:NixOS/nixpkgs?rev=6251e94ffc8fbd374cd7ec8e7d99e729307f4981"
+source = "github:NixOS/nixpkgs?rev=606b241fb09ccb079fb0fb85099b03e2d902ddc0"
 
 [[files]]
 path = "by-name/gi/gitaly/git.nix"
-sha256 = "5057d71aad20c97c99f851927c397426d50d19ae1970b2a5ecca0bf3988f27f1"
+sha256 = "2c655e9ad08c59408c783aac5f1fc61db4fbe49e9394b3e97caea597282b0e50"
 
 [[files]]
 path = "by-name/gi/gitaly/package.nix"
-sha256 = "9f07d8ab99edd5ed90ef41ed70b3967bdd5493f3ddf57dd702a903aadb4319bf"
+sha256 = "b3a8edf4f1613b3a0d146e8afc7b3c7151fea2c98b53aab8ebee2ec63d0c4fee"
 
 [[files]]
 path = "by-name/gi/gitlab-container-registry/fix-broken-urlcache-tests.diff"
@@ -14,27 +14,31 @@ sha256 = "71965fcd83cd055169a3c4f4f556f453b7e8a4d7285c7359ea72f75cede07f12"
 
 [[files]]
 path = "by-name/gi/gitlab-container-registry/package.nix"
-sha256 = "5e4f0a19e191f541c175c1370557dd982d2e3f9df384e5a32e8a1dcd8904d21f"
+sha256 = "c77cb15a2dc1652afc760b429a0d06379a30b122e9aa698958159962f266a8c7"
 
 [[files]]
 path = "by-name/gi/gitlab/data.json"
-sha256 = "2bac6e04102be1dfb2793fb38db19f8bd448e01912ebf10fe256b07a69c36428"
+sha256 = "ff0270e18b961c320ce1ce5a15bac196ce10b17ec038078def1c0ebbc3742bc3"
+
+[[files]]
+path = "by-name/gi/gitlab-elasticsearch-indexer/code-parser.nix"
+sha256 = "c8be42b689398d75476196d565617837d33435b7579ef416110ea234970aefe6"
 
 [[files]]
 path = "by-name/gi/gitlab-elasticsearch-indexer/package.nix"
-sha256 = "dca2d30a63b08983fff8f5de49e6ce6f8fe0d7cb9819e5dc7c63c7beb9bb78de"
+sha256 = "2e8fe3a619dcee1cf9d8e84e1e398b6a57815a062de28d73e228bc2594a16d8c"
 
 [[files]]
 path = "by-name/gi/gitlab/gitlab-workhorse/default.nix"
-sha256 = "d2f50e87a51d798866bb739a8eaca8c6dcef9525f8611e7593392bdbafcf4af8"
+sha256 = "218bb3787506844dbfe2eb4438e71eab6571728cf53ff5b277512845d7e0e6cc"
 
 [[files]]
 path = "by-name/gi/gitlab/package.nix"
-sha256 = "4e710faa1045a7dfb618373bb6688dd61721877cf8f7099bc202370fe91460c5"
+sha256 = "c3b286fe830f16dd71f334ce84f7b8e654c0620bf3d26155b406e7652c52b363"
 
 [[files]]
 path = "by-name/gi/gitlab-pages/package.nix"
-sha256 = "1cc03d177a07b30f63b0f62f10acdb6a7435ab70eadc5f38989c14cabc1726e8"
+sha256 = "54bc3cfe96bd7035acdbe01fb7e9ded01943dd6e7b6de7c7f78d3625df2f5a71"
 
 [[files]]
 path = "by-name/gi/gitlab/remove-hardcoded-locations.patch"
@@ -50,15 +54,15 @@ sha256 = "1438e7ae724db0cf70b310b9f712f923f9ea9804da486eb1c97ba7fbe4e3d8d4"
 
 [[files]]
 path = "by-name/gi/gitlab/rubyEnv/Gemfile"
-sha256 = "7faba1277a90be1214c2fdb66e145dbb8be903cc7c7bcfd509dfaab8cf85a53b"
+sha256 = "a7f1138f78c25551845fe97ef6faf0973a1bbb2d6dc6f239e332cfc9e66beb5d"
 
 [[files]]
 path = "by-name/gi/gitlab/rubyEnv/Gemfile.lock"
-sha256 = "e3c8c216c7b3fe044e508c15bc62e5b34443f1fa9cfbd37550a411945180c13e"
+sha256 = "8d6d49180bbd905f4c07b8dc3d45ef42e429506f6eab1d67f07615b7489f2b21"
 
 [[files]]
 path = "by-name/gi/gitlab/rubyEnv/gemset.nix"
-sha256 = "ac84f89cb55fa4d3e60619e4e0b43266b7e4fed9640fab0320d5f049530c09e2"
+sha256 = "06a8230654a639506f3c7c9fbdeaa10a88c90dab1a51342ff6f7b32875445a2f"
 
 [[files]]
 path = "by-name/gi/gitlab-runner/fix-shell-path.patch"
@@ -66,7 +70,7 @@ sha256 = "81650d4bcc30ba36dcfe82de0c0d21a37d27197a8fb1b95e7f5e194e8046646e"
 
 [[files]]
 path = "by-name/gi/gitlab-runner/package.nix"
-sha256 = "5354f5ad134db6b290cec9f7ac2a2be2ab27697ea01806053259db7c3796c968"
+sha256 = "c5b201060002ce3a813498b44ecc219ca962f3e08f96f056de2ae225d010311f"
 
 [[files]]
 path = "by-name/gi/gitlab-runner/remove-bash-test.patch"
@@ -74,7 +78,7 @@ sha256 = "03b6c3e043761831cbb2247fa0f74d102d89e778e8cb40655060349c5834101c"
 
 [[files]]
 path = "by-name/gi/gitlab-shell/package.nix"
-sha256 = "3a12b47b3cd372c6edcd47748741cf2849b9fb5d9f32347179e3b6ca49dd1d84"
+sha256 = "41184469507bd1af8853a577c2ac0d372d849f66e1b7656d55a3b463a91c720b"
 
 [[files]]
 path = "by-name/gi/gitlab-shell/remove-hardcoded-locations.patch"
@@ -82,5 +86,4 @@ sha256 = "bcdc20e4243b45ca9b0093de531cea43c657b4ce927e34fbe97e0bebdd9fc1ac"
 
 [[files]]
 path = "by-name/gi/gitlab/update.py"
-sha256 = "614697a920576b881e876213255ae9860e3c230be6c597cbf66f3b70c995058a"
-
+sha256 = "1fb822f47f471bec18883eaa18c23d0b086f2efdd92c197adca8d5b09a63eca1"
