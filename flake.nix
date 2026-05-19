@@ -53,6 +53,10 @@
           };
           devShells.default = pkgs.mkShellNoCC {
             inputsFrom = [ fmtEval.config.build.devShell ];
+            packages = with pkgs; [
+              dasel  # TOML driver for .claude/skills/* (DESIGN §16)
+              jq
+            ];
           };
           legacyPackages = pkgs;
           packages = lib.filterAttrs (_: lib.isDerivation) pkgs.gitlab-nix;
