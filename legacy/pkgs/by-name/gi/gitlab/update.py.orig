@@ -355,11 +355,6 @@ def update_gitlab_container_registry(rev: str, commit: bool):
         rev = omnibus_container_registry_version(rev)
 
     version = repo.rev2version(rev)
-    pkg = NIXPKGS_PATH / "pkgs/by-name/gi/gitlab-container-registry/package.nix"
-    pkg.write_text(
-        re.sub(r'rev = "v\$\{version\}-[^"]+";',
-               'rev = "v${version}-gitlab";', pkg.read_text())
-    )
     _call_nix_update("gitlab-container-registry", version)
     if commit:
         new_container_registry_version = get_container_registry_version()
