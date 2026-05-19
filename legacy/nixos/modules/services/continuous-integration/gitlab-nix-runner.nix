@@ -693,7 +693,12 @@ in
     };
   };
   config = mkIf cfg.enable {
-    assertions = mapAttrsToList (name: serviceConfig: {
+    assertions = [
+      {
+        assertion = !(config.services.gitlab-runner.enable or false);
+        message = "services.gitlab-nix-runner and services.gitlab-runner cannot be enabled simultaneously.";
+      }
+    ] ++ mapAttrsToList (name: serviceConfig: {
       assertion =
         serviceConfig.registrationConfigFile == null || serviceConfig.authenticationTokenConfigFile == null;
       message = "`services.gitlab-nix-runner.${name}.registrationConfigFile` and `services.gitlab-nix-runner.services.${name}.authenticationTokenConfigFile` are mutually exclusive.";
