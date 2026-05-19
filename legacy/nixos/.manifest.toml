@@ -24,3 +24,8 @@ sha256 = "b3af63b654d6b7918af645cbe1f47657371c61923aaf15d095e34695f7919c6c"
 src = "nixos/tests/ssh-keys.nix"
 dst = "tests/ssh-keys.nix"
 sha256 = "0a6a2fa598b2ba11ce66e2d726a18206bb5bd1dfece1607b29450095588d6545"
+
+[[files]]
+src = "nixos/tests/common/user-account.nix"
+dst = "tests/common/user-account.nix"
+sha256 = "b4412bc7bcf4498b1226fa59243ef2975ec3b8fc7a7c9af74afb8b9fd5804532"
