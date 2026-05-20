@@ -492,6 +492,7 @@ def update_all(ctx, rev: str, commit: bool):
     ctx.invoke(update_rubyenv)
     ctx.invoke(update_gitaly)
     ctx.invoke(update_gitlab_pages)
+    ctx.invoke(update_gitlab_kas)
     ctx.invoke(update_gitlab_shell)
     ctx.invoke(update_gitlab_workhorse)
     ctx.invoke(update_gitlab_elasticsearch_indexer)
