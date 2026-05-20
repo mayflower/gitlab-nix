@@ -43,7 +43,7 @@ let
     types
     ;
 
-  cfg = config.services.gitlab-nix-runner;
+  cfg = config.services.gitlab-runner;
   hasDocker = config.virtualisation.docker.enable;
   hasPodman = config.virtualisation.podman.enable && config.virtualisation.podman.dockerSocket.enable;
 
@@ -223,7 +223,7 @@ let
   '';
 in
 {
-  options.services.gitlab-nix-runner = {
+  options.services.gitlab-runner = {
     enable = mkEnableOption "Gitlab Runner";
     configFile = mkOption {
       type = types.nullOr types.path;
@@ -318,7 +318,7 @@ in
 
               ''${pkgs.nix}/bin/nix-env -i ''${concatStringsSep " " (with pkgs; [ nix cacert git openssh ])}
 
-              ''${pkgs.nix}/bin/nix-channel --add https://nixos.org/channels/nixpkgs-unstable
+              ''${pkgs.nix}/bin/nix-channel --add https://channels.nixos.org/nixpkgs-unstable
               ''${pkgs.nix}/bin/nix-channel --update nixpkgs
             ''';
             environmentVariables = {
@@ -412,7 +412,7 @@ in
                 will be removed in GitLab 18.0, as outlined in the
                 [GitLab documentation]. Please consider migrating to
                 [runner authentication tokens] and check the documentation on
-                {option}`services.gitlab-nix-runner.services.<name>.authenticationTokenConfigFile`.
+                {option}`services.gitlab-runner.services.<name>.authenticationTokenConfigFile`.
 
                 ::: {.warning}
                 Make sure to use a quoted absolute path,
@@ -693,27 +693,22 @@ in
     };
   };
   config = mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = !(config.services.gitlab-runner.enable or false);
-        message = "services.gitlab-nix-runner and services.gitlab-runner cannot be enabled simultaneously.";
-      }
-    ] ++ mapAttrsToList (name: serviceConfig: {
+    assertions = mapAttrsToList (name: serviceConfig: {
       assertion =
         serviceConfig.registrationConfigFile == null || serviceConfig.authenticationTokenConfigFile == null;
-      message = "`services.gitlab-nix-runner.${name}.registrationConfigFile` and `services.gitlab-nix-runner.services.${name}.authenticationTokenConfigFile` are mutually exclusive.";
+      message = "`services.gitlab-runner.${name}.registrationConfigFile` and `services.gitlab-runner.services.${name}.authenticationTokenConfigFile` are mutually exclusive.";
     }) cfg.services;
 
     warnings =
       mapAttrsToList (
         name: serviceConfig:
-        "services.gitlab-nix-runner.services.${name}.`registrationConfigFile` points to a file in Nix Store. You should use quoted absolute path to prevent this."
+        "services.gitlab-runner.services.${name}.`registrationConfigFile` points to a file in Nix Store. You should use quoted absolute path to prevent this."
       ) (filterAttrs (name: serviceConfig: isStorePath serviceConfig.registrationConfigFile) cfg.services)
       ++
         mapAttrsToList
           (
             name: serviceConfig:
-            "services.gitlab-nix-runner.services.${name}.`authenticationTokenConfigFile` points to a file in Nix Store. You should use quoted absolute path to prevent this."
+            "services.gitlab-runner.services.${name}.`authenticationTokenConfigFile` points to a file in Nix Store. You should use quoted absolute path to prevent this."
           )
           (
             filterAttrs (
@@ -724,7 +719,7 @@ in
         mapAttrsToList
           (name: serviceConfig: ''
             Runner registration tokens have been deprecated and disabled by default in GitLab >= 17.0.
-            Consider migrating to runner authentication tokens by setting `services.gitlab-nix-runner.services.${name}.authenticationTokenConfigFile`.
+            Consider migrating to runner authentication tokens by setting `services.gitlab-runner.services.${name}.authenticationTokenConfigFile`.
             https://docs.gitlab.com/17.0/ee/ci/runners/new_creation_workflow.html'')
           (
             filterAttrs (name: serviceConfig: serviceConfig.authenticationTokenConfigFile == null) cfg.services
@@ -733,7 +728,7 @@ in
         mapAttrsToList
           (
             name: serviceConfig:
-            ''`services.gitlab-nix-runner.services.${name}.protected` with runner authentication tokens has no effect and will be ignored. Please remove it from your configuration.''
+            "`services.gitlab-runner.services.${name}.protected` with runner authentication tokens has no effect and will be ignored. Please remove it from your configuration."
           )
           (
             filterAttrs (
@@ -745,7 +740,7 @@ in
         mapAttrsToList
           (
             name: serviceConfig:
-            ''`services.gitlab-nix-runner.services.${name}.runUntagged` with runner authentication tokens has no effect and will be ignored. Please remove it from your configuration.''
+            "`services.gitlab-runner.services.${name}.runUntagged` with runner authentication tokens has no effect and will be ignored. Please remove it from your configuration."
           )
           (
             filterAttrs (
@@ -757,7 +752,7 @@ in
         mapAttrsToList
           (
             name: v:
-            ''`services.gitlab-nix-runner.services.${name}.maximumTimeout` with runner authentication tokens has no effect and will be ignored. Please remove it from your configuration.''
+            "`services.gitlab-runner.services.${name}.maximumTimeout` with runner authentication tokens has no effect and will be ignored. Please remove it from your configuration."
           )
           (
             filterAttrs (
@@ -769,7 +764,7 @@ in
         mapAttrsToList
           (
             name: v:
-            ''`services.gitlab-nix-runner.services.${name}.tagList` with runner authentication tokens has no effect and will be ignored. Please remove it from your configuration.''
+            "`services.gitlab-runner.services.${name}.tagList` with runner authentication tokens has no effect and will be ignored. Please remove it from your configuration."
           )
           (
             filterAttrs (
@@ -853,48 +848,48 @@ in
   };
   imports = [
     (mkRenamedOptionModule
-      [ "services" "gitlab-nix-runner" "packages" ]
-      [ "services" "gitlab-nix-runner" "extraPackages" ]
+      [ "services" "gitlab-runner" "packages" ]
+      [ "services" "gitlab-runner" "extraPackages" ]
     )
     (mkRemovedOptionModule [
       "services"
-      "gitlab-nix-runner"
+      "gitlab-runner"
       "configOptions"
-    ] "Use services.gitlab-nix-runner.services option instead")
+    ] "Use services.gitlab-runner.services option instead")
     (mkRemovedOptionModule [
       "services"
-      "gitlab-nix-runner"
+      "gitlab-runner"
       "workDir"
     ] "You should move contents of workDir (if any) to /var/lib/gitlab-runner")
 
     (mkRenamedOptionModule
-      [ "services" "gitlab-nix-runner" "checkInterval" ]
-      [ "services" "gitlab-nix-runner" "settings" "check_interval" ]
+      [ "services" "gitlab-runner" "checkInterval" ]
+      [ "services" "gitlab-runner" "settings" "check_interval" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-nix-runner" "concurrent" ]
-      [ "services" "gitlab-nix-runner" "settings" "concurrent" ]
+      [ "services" "gitlab-runner" "concurrent" ]
+      [ "services" "gitlab-runner" "settings" "concurrent" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-nix-runner" "sentryDSN" ]
-      [ "services" "gitlab-nix-runner" "settings" "sentry_dsn" ]
+      [ "services" "gitlab-runner" "sentryDSN" ]
+      [ "services" "gitlab-runner" "settings" "sentry_dsn" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-nix-runner" "prometheusListenAddress" ]
-      [ "services" "gitlab-nix-runner" "settings" "listen_address" ]
+      [ "services" "gitlab-runner" "prometheusListenAddress" ]
+      [ "services" "gitlab-runner" "settings" "listen_address" ]
     )
 
     (mkRenamedOptionModule
-      [ "services" "gitlab-nix-runner" "sessionServer" "listenAddress" ]
-      [ "services" "gitlab-nix-runner" "settings" "session_server" "listen_address" ]
+      [ "services" "gitlab-runner" "sessionServer" "listenAddress" ]
+      [ "services" "gitlab-runner" "settings" "session_server" "listen_address" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-nix-runner" "sessionServer" "advertiseAddress" ]
-      [ "services" "gitlab-nix-runner" "settings" "session_server" "advertise_address" ]
+      [ "services" "gitlab-runner" "sessionServer" "advertiseAddress" ]
+      [ "services" "gitlab-runner" "settings" "session_server" "advertise_address" ]
     )
     (mkRenamedOptionModule
-      [ "services" "gitlab-nix-runner" "sessionServer" "sessionTimeout" ]
-      [ "services" "gitlab-nix-runner" "settings" "session_server" "session_timeout" ]
+      [ "services" "gitlab-runner" "sessionServer" "sessionTimeout" ]
+      [ "services" "gitlab-runner" "settings" "session_server" "session_timeout" ]
     )
   ];
 
