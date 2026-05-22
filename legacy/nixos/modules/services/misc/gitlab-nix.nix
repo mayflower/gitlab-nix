@@ -10,8 +10,8 @@
 with lib;
 
 let
-  cfg = config.services.gitlab-nix;
-  opt = options.services.gitlab-nix;
+  cfg = config.services.gitlab;
+  opt = options.services.gitlab;
 
   toml = pkgs.formats.toml { };
   yaml = pkgs.formats.yaml { };
@@ -279,24 +279,24 @@ in
 {
 
   imports = [
-    (mkRenamedOptionModule [ "services" "gitlab-nix" "stateDir" ] [ "services" "gitlab-nix" "statePath" ])
-    (mkRenamedOptionModule [ "services" "gitlab-nix" "backupPath" ] [ "services" "gitlab-nix" "backup" "path" ])
-    (mkRemovedOptionModule [ "services" "gitlab-nix" "satelliteDir" ] "")
+    (mkRenamedOptionModule [ "services" "gitlab" "stateDir" ] [ "services" "gitlab" "statePath" ])
+    (mkRenamedOptionModule [ "services" "gitlab" "backupPath" ] [ "services" "gitlab" "backup" "path" ])
+    (mkRemovedOptionModule [ "services" "gitlab" "satelliteDir" ] "")
     (mkRemovedOptionModule [
       "services"
-      "gitlab-nix"
+      "gitlab"
       "logrotate"
       "extraConfig"
     ] "Modify services.logrotate.settings.gitlab directly instead")
     (mkRemovedOptionModule [
       "services"
-      "gitlab-nix"
+      "gitlab"
       "pagesExtraArgs"
-    ] "Use services.gitlab-nix.pages.settings instead")
+    ] "Use services.gitlab.pages.settings instead")
   ];
 
   options = {
-    services.gitlab-nix = {
+    services.gitlab = {
       enable = mkOption {
         type = types.bool;
         default = false;
@@ -327,7 +327,7 @@ in
           The directory will be created automatically if it doesn't
           exist already. Its parent directories must be owned by
           either `root` or the user set in
-          {option}`services.gitlab-nix.user`.
+          {option}`services.gitlab.user`.
         '';
       };
 
@@ -467,7 +467,7 @@ in
           Whether a database should be automatically created on the
           local host. Set this to `false` if you plan
           on provisioning a local database yourself. This has no effect
-          if {option}`services.gitlab-nix.databaseHost` is customized.
+          if {option}`services.gitlab.databaseHost` is customized.
         '';
       };
 
@@ -599,8 +599,8 @@ in
         };
         host = mkOption {
           type = types.str;
-          default = config.services.gitlab-nix.host;
-          defaultText = literalExpression "config.services.gitlab-nix.host";
+          default = config.services.gitlab.host;
+          defaultText = literalExpression "config.services.gitlab.host";
           description = "GitLab container registry host name.";
         };
         port = mkOption {
@@ -781,7 +781,7 @@ in
             artifacts-server = mkOption {
               type = with types; nullOr str;
               default = "http${optionalString cfg.https "s"}://${cfg.host}/api/v4";
-              defaultText = "http(s)://<services.gitlab-nix.host>/api/v4";
+              defaultText = "http(s)://<services.gitlab.host>/api/v4";
               example = "https://gitlab.example.com/api/v4";
               description = ''
                 API URL to proxy artifact requests to.
@@ -791,7 +791,7 @@ in
             gitlab-server = mkOption {
               type = with types; nullOr str;
               default = "http${optionalString cfg.https "s"}://${cfg.host}";
-              defaultText = "http(s)://<services.gitlab-nix.host>";
+              defaultText = "http(s)://<services.gitlab.host>";
               example = "https://gitlab.example.com";
               description = ''
                 Public GitLab server URL.
@@ -801,13 +801,13 @@ in
             internal-gitlab-server = mkOption {
               type = with types; nullOr str;
               default = null;
-              defaultText = "http(s)://<services.gitlab-nix.host>";
+              defaultText = "http(s)://<services.gitlab.host>";
               example = "https://gitlab.example.internal";
               description = ''
                 Internal GitLab server used for API requests, useful
                 if you want to send that traffic over an internal load
                 balancer. By default, the value of
-                `services.gitlab-nix.pages.settings.gitlab-server` is
+                `services.gitlab.pages.settings.gitlab-server` is
                 used.
               '';
             };
@@ -913,7 +913,7 @@ in
         default = null;
         description = ''
           A file containing the secret used to encrypt some rails data
-          in the DB. This should not be the same as `services.gitlab-nix.secrets.activeRecordDeterministicKeyFile`!
+          in the DB. This should not be the same as `services.gitlab.secrets.activeRecordDeterministicKeyFile`!
 
           Make sure the secret is at ideally 32 characters and all random,
           no regular words or you'll be exposed to dictionary attacks.
@@ -928,7 +928,7 @@ in
         default = null;
         description = ''
           A file containing the secret used to encrypt some rails data in a deterministic way
-          in the DB. This should not be the same as `services.gitlab-nix.secrets.activeRecordPrimaryKeyFile`!
+          in the DB. This should not be the same as `services.gitlab.secrets.activeRecordPrimaryKeyFile`!
 
           Make sure the secret is at ideally 32 characters and all random,
           no regular words or you'll be exposed to dictionary attacks.
@@ -1198,48 +1198,44 @@ in
 
     assertions = [
       {
-        assertion = !(config.services.gitlab.enable or false);
-        message = "services.gitlab-nix and services.gitlab cannot be enabled simultaneously.";
-      }
-      {
         assertion = databaseActuallyCreateLocally -> (cfg.user == cfg.databaseUsername);
-        message = ''For local automatic database provisioning (services.gitlab-nix.databaseCreateLocally == true) with peer authentication (services.gitlab-nix.databaseHost == "") to work services.gitlab-nix.user and services.gitlab-nix.databaseUsername must be identical.'';
+        message = ''For local automatic database provisioning (services.gitlab.databaseCreateLocally == true) with peer authentication (services.gitlab.databaseHost == "") to work services.gitlab.user and services.gitlab.databaseUsername must be identical.'';
       }
       {
         assertion = (cfg.databaseHost != "") -> (cfg.databasePasswordFile != null);
-        message = "When services.gitlab-nix.databaseHost is customized, services.gitlab-nix.databasePasswordFile must be set!";
+        message = "When services.gitlab.databaseHost is customized, services.gitlab.databasePasswordFile must be set!";
       }
       {
         assertion = cfg.initialRootPasswordFile != null;
-        message = "services.gitlab-nix.initialRootPasswordFile must be set!";
+        message = "services.gitlab.initialRootPasswordFile must be set!";
       }
       {
         assertion = cfg.secrets.secretFile != null;
-        message = "services.gitlab-nix.secrets.secretFile must be set!";
+        message = "services.gitlab.secrets.secretFile must be set!";
       }
       {
         assertion = cfg.secrets.dbFile != null;
-        message = "services.gitlab-nix.secrets.dbFile must be set!";
+        message = "services.gitlab.secrets.dbFile must be set!";
       }
       {
         assertion = cfg.secrets.otpFile != null;
-        message = "services.gitlab-nix.secrets.otpFile must be set!";
+        message = "services.gitlab.secrets.otpFile must be set!";
       }
       {
         assertion = cfg.secrets.jwsFile != null;
-        message = "services.gitlab-nix.secrets.jwsFile must be set!";
+        message = "services.gitlab.secrets.jwsFile must be set!";
       }
       {
         assertion = cfg.secrets.activeRecordPrimaryKeyFile != null;
-        message = "services.gitlab-nix.secrets.activeRecordPrimaryKeyFile must be set!";
+        message = "services.gitlab.secrets.activeRecordPrimaryKeyFile must be set!";
       }
       {
         assertion = cfg.secrets.activeRecordDeterministicKeyFile != null;
-        message = "services.gitlab-nix.secrets.activeRecordDeterministicKeyFile must be set!";
+        message = "services.gitlab.secrets.activeRecordDeterministicKeyFile must be set!";
       }
       {
         assertion = cfg.secrets.activeRecordSaltFile != null;
-        message = "services.gitlab-nix.secrets.activeRecordSaltFile must be set!";
+        message = "services.gitlab.secrets.activeRecordSaltFile must be set!";
       }
       {
         assertion = versionAtLeast postgresqlPackage.version "16";
@@ -1695,7 +1691,7 @@ in
       };
     };
 
-    services.gitlab-nix.pages.settings = {
+    services.gitlab.pages.settings = {
       api-secret-key = "${cfg.statePath}/gitlab_pages_secret";
     };
 
@@ -1915,5 +1911,5 @@ in
   };
 
   meta.doc = ./gitlab.md;
-  meta.maintainers = teams.gitlab.members;
+  meta.teams = [ teams.gitlab ];
 }
