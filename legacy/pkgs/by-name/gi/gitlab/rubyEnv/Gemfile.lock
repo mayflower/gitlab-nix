@@ -1634,7 +1634,7 @@ GEM
     pyu-ruby-sasl (0.0.3.3)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (2.2.22)
+    rack (2.2.23)
     rack-accept (0.4.5)
       rack (>= 0.4)
     rack-attack (6.8.0)
@@ -1863,7 +1863,7 @@ GEM
     rubyntlm (0.6.3)
     rubypants (0.2.0)
     rubyzip (2.4.1)
-    rugged (1.9.0)
+    rugged (1.7.2)
     safe_yaml (1.0.4)
     safety_net_attestation (0.4.0)
       jwt (~> 2.0)
@@ -2166,6 +2166,7 @@ GEM
     yard-solargraph (0.1.0)
       yard (~> 0.9)
     zeitwerk (2.6.18)
+    zlib (3.2.3)
 
 PLATFORMS
   ruby
@@ -2483,7 +2484,7 @@ DEPENDENCIES
   ruby-progressbar (~> 1.10)
   ruby-saml (~> 1.18)
   rubyzip (~> 2.4.0)
-  rugged (~> 1.9)
+  rugged (~> 1.7.2)
   sanitize (~> 6.0.2)
   sd_notify (~> 0.1.0)
   seed-fu (~> 2.3.7)
@@ -2545,6 +2546,7 @@ DEPENDENCIES
   yajl-ruby (~> 1.4.3)
   yard (~> 0.9)
   zeitwerk (= 2.6.18)
+  zlib (~> 3.2, >= 3.2.3)
 
 BUNDLED WITH
    2.7.1
