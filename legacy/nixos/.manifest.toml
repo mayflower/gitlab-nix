@@ -19,3 +19,13 @@ sha256 = "c19322a47855016559ac55f70100212b9d034f4d77f4b3d6f35e020acb5cc1b9"
 src = "nixos/tests/gitlab.nix"
 dst = "tests/gitlab.nix"
 sha256 = "b3af63b654d6b7918af645cbe1f47657371c61923aaf15d095e34695f7919c6c"
+
+[[files]]
+src = "nixos/tests/ssh-keys.nix"
+dst = "tests/ssh-keys.nix"
+sha256 = "da0ddfafdaee4aee522a78b312b32c09b84204b7c9a38aff99cbca1ddfd3658b"
+
+[[files]]
+src = "nixos/tests/common/user-account.nix"
+dst = "tests/common/user-account.nix"
+sha256 = "b4412bc7bcf4498b1226fa59243ef2975ec3b8fc7a7c9af74afb8b9fd5804532"
