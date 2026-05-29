@@ -81,7 +81,7 @@ in
 
         systemd.services.gitlab-backup.environment.BACKUP = "dump";
 
-        services.gitlab-nix = {
+        services.gitlab = {
           enable = true;
           databasePasswordFile = pkgs.writeText "dbPassword" "xo0daiF4";
           initialRootPasswordFile = pkgs.writeText "rootPassword" initialRootPassword;
@@ -229,7 +229,7 @@ in
         gitlab.wait_for_unit("gitlab.service")
         gitlab.wait_for_unit("gitlab-pages.service")
         gitlab.wait_for_unit("gitlab-sidekiq.service")
-        gitlab.wait_for_file("${nodes.gitlab.services.gitlab-nix.statePath}/tmp/sockets/gitlab.socket")
+        gitlab.wait_for_file("${nodes.gitlab.services.gitlab.statePath}/tmp/sockets/gitlab.socket")
         gitlab.wait_until_succeeds("curl -sSf http://gitlab/users/sign_in")
         gitlab.wait_for_unit("docker-registry.service")
       '';
@@ -487,15 +487,15 @@ in
     + ''
       gitlab.systemctl("start gitlab-backup.service")
       gitlab.wait_for_unit("gitlab-backup.service")
-      gitlab.wait_for_file("${nodes.gitlab.services.gitlab-nix.statePath}/backup/dump_gitlab_backup.tar")
+      gitlab.wait_for_file("${nodes.gitlab.services.gitlab.statePath}/backup/dump_gitlab_backup.tar")
       gitlab.systemctl("stop postgresql gitlab-config.service gitlab.target")
       gitlab.succeed(
-          "find ${nodes.gitlab.services.gitlab-nix.statePath} -mindepth 1 -maxdepth 1 -not -name backup -execdir rm -r {} +"
+          "find ${nodes.gitlab.services.gitlab.statePath} -mindepth 1 -maxdepth 1 -not -name backup -execdir rm -r {} +"
       )
       gitlab.succeed("systemd-tmpfiles --create")
       gitlab.succeed("rm -rf ${nodes.gitlab.services.postgresql.dataDir}")
       gitlab.systemctl("start gitlab-config.service gitaly.service gitlab-postgresql.service")
-      gitlab.wait_for_file("${nodes.gitlab.services.gitlab-nix.statePath}/tmp/sockets/gitaly.socket")
+      gitlab.wait_for_file("${nodes.gitlab.services.gitlab.statePath}/tmp/sockets/gitaly.socket")
       gitlab.succeed(
           "sudo -u gitlab -H gitlab-rake gitlab:backup:restore RAILS_ENV=production BACKUP=dump force=yes"
       )
