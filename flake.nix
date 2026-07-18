@@ -59,7 +59,7 @@
             ];
           };
           legacyPackages = pkgs;
-          packages = lib.filterAttrs (_: lib.isDerivation) pkgs.gitlab-nix;
+          packages = pkgs.gitlab-nix;
           checks = import ./${branch}/tests.nix { inherit pkgs; };
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
