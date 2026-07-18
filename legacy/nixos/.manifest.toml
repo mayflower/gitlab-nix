@@ -1,9 +1,4 @@
-source = "github:NixOS/nixpkgs?rev=11cda251ebadef1877a8adad04d175cc54fae7d3"
-
-[[files]]
-src = "nixos/modules/services/continuous-integration/gitlab-runner.nix"
-dst = "modules/services/continuous-integration/gitlab-nix-runner.nix"
-sha256 = "637cb5ca2899947950f86502ef03ba4094094a67e505ed91bfe640021823d502"
+source = "github:NixOS/nixpkgs?rev=d57cfaf51dbf146e76095edc25908759516766c4"
 
 [[files]]
 src = "nixos/modules/services/misc/gitlab.nix"
@@ -13,12 +8,122 @@ sha256 = "b33c7e1a2be71b7241b6e85629cafaf3233a1c1170e19a3c4d5bb73940b450aa"
 [[files]]
 src = "nixos/modules/services/misc/gitlab.md"
 dst = "modules/services/misc/gitlab-nix.md"
-sha256 = "c19322a47855016559ac55f70100212b9d034f4d77f4b3d6f35e020acb5cc1b9"
+sha256 = "34f59c844326e9a06e979518a8c6a9ce1624343c4e4b1a838fe41706359a6306"
 
 [[files]]
-src = "nixos/tests/gitlab.nix"
-dst = "tests/gitlab.nix"
-sha256 = "b3af63b654d6b7918af645cbe1f47657371c61923aaf15d095e34695f7919c6c"
+src = "nixos/modules/services/continuous-integration/gitlab-runner/runner.nix"
+dst = "modules/services/continuous-integration/gitlab-nix-runner.nix"
+sha256 = "637cb5ca2899947950f86502ef03ba4094094a67e505ed91bfe640021823d502"
+
+[[files]]
+src = "nixos/tests/gitlab/gitlab.nix"
+dst = "tests/gitlab/gitlab.nix"
+sha256 = "43dde0af5d39ee1ee5b1359ec9ea95434c03ea8e3c7b940bc071f9de1d258751"
+
+[[files]]
+src = "nixos/tests/gitlab/runner.nix"
+dst = "tests/gitlab/runner.nix"
+sha256 = "f8c25f0f3fe34464edd07aff96a3a79e23747db35a0fecaeec61758f2a3a2461"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/default.nix"
+dst = "tests/gitlab/runner/podman-runner/default.nix"
+sha256 = "2987bff5b36495a657083c5ddcafae744ada8b6c379d6d47e69082c9f74c42c6"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/basicRoot/etc/group"
+dst = "tests/gitlab/runner/podman-runner/files/basicRoot/etc/group"
+sha256 = "47450a26f8da348cc9b87c979dd90534830b0167a93fdb7bb3fc3a14219091ae"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/basicRoot/etc/nsswitch.conf"
+dst = "tests/gitlab/runner/podman-runner/files/basicRoot/etc/nsswitch.conf"
+sha256 = "d9674ee746e6d015e185afdd87944455f070816a0807134a79c347bf53f6f495"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/basicRoot/etc/passwd"
+dst = "tests/gitlab/runner/podman-runner/files/basicRoot/etc/passwd"
+sha256 = "a5f98fbb29ac1c4fd9d7f1134a00cd774b57e5526e165978da8e1dc0737b5adb"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/containers.conf"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/containers.conf"
+sha256 = "8c5dd2feeb43032676b4f80cc069ccc6b26171f2f6b8709d6990c59726079340"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/mounts.conf"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/mounts.conf"
+sha256 = "3224cb671aa5bdae465a9a8b13f97415d4fb006b3a37d7575bcbfae4058abf8f"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/policy.json"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/policy.json"
+sha256 = "fd30ebf6d784d9dc63a1b5db575e6f500340aed232b0c968bebfac8c503ed24b"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.conf"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.conf"
+sha256 = "82302fc58009804cd24bc3fd38bdf04087f3dc6bb353f89aac13e24978389109"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.conf.d/000-shortnames.conf"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.conf.d/000-shortnames.conf"
+sha256 = "8c9141ec4ece08f0426755c6c0c87e5acedbc3177a2c5c1cd5e443d0dc6c7189"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.d/default.yaml"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.d/default.yaml"
+sha256 = "370f4cd92207c958346363b35df4f81bf5a84e4ef5b3f97a7990595ac0e04297"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.d/registry.access.redhat.com.yaml"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.d/registry.access.redhat.com.yaml"
+sha256 = "cb990bee660def6c78a02b5a23a6ec5de0402cd696df34700cadf5346fee51b8"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.d/registry.redhat.io.yaml"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/registries.d/registry.redhat.io.yaml"
+sha256 = "4d129fc6a8b3cfed9a80088f85f64f5cc36a02631b7723ee353013598e777eb5"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/containers/etc/containers/storage.conf"
+dst = "tests/gitlab/runner/podman-runner/files/containers/etc/containers/storage.conf"
+sha256 = "f5bf870ff71a2ad3e888dd4eea6c35f67796c09acffaa71b6a5166571c4a7290"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/default.nix"
+dst = "tests/gitlab/runner/podman-runner/files/default.nix"
+sha256 = "2e1e848eda062b5fc300aa2e7532badf9333b45b089755eb0cfe576e074e265d"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/files/fake-nixpkgs/default.nix"
+dst = "tests/gitlab/runner/podman-runner/files/fake-nixpkgs/default.nix"
+sha256 = "aa4d5989f9b2f44d38d1789037ab7f1b623b5e321bf5874bde2cb06a19efc703"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/nix-image.nix"
+dst = "tests/gitlab/runner/podman-runner/nix-image.nix"
+sha256 = "8586bead047112f995a12f9f17873aef045bd0c31634ac70fbdb4a743ce1a973"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/scripts/prebuild.nix"
+dst = "tests/gitlab/runner/podman-runner/scripts/prebuild.nix"
+sha256 = "0dde2b88409ce9f7822c95aef385d255b41acb5dba5b60d1934d5476bae4e971"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/podman-runner/virtualization.nix"
+dst = "tests/gitlab/runner/podman-runner/virtualization.nix"
+sha256 = "eb6c61cd2a944dc1f80e4b4f5488c9714cb53e41e37b5cd657d53f85b3929b56"
+
+[[files]]
+src = "nixos/tests/gitlab/runner/shell-runner.nix"
+dst = "tests/gitlab/runner/shell-runner.nix"
+sha256 = "d3bdfa51ba41b98a25aefb3d3fa28eb1fcf66dc23a0fd39b9cca857f6a1e48e0"
+
+[[files]]
+src = "nixos/tests/gitlab/runner_test.py"
+dst = "tests/gitlab/runner_test.py"
+sha256 = "be5efbfb92df10530107b03a549f7424b203714e7de38cc71246b97f9bce3bac"
 
 [[files]]
 src = "nixos/tests/ssh-keys.nix"
