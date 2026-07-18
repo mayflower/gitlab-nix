@@ -74,7 +74,7 @@ in
         };
 
         # Define the Gitlab Runner.
-        services.gitlab-runner = {
+        services.gitlab-nix-runner = {
           enable = true;
 
           settings = {
@@ -113,7 +113,7 @@ in
           };
         };
 
-        services.gitlab = {
+        services.gitlab-nix = {
           enable = true;
           databasePasswordFile = pkgs.writeText "dbPassword" "xo0daiF4";
           initialRootPasswordFile = pkgs.writeText "rootPassword" initialRootPassword;
@@ -160,7 +160,7 @@ in
     ''
       # Define some globals for the python script below.
       JQ_BINARY="${pkgs.jq}/bin/jq"
-      GITLAB_STATE_PATH="${nodes.gitlab.services.gitlab.statePath}"
+      GITLAB_STATE_PATH="${nodes.gitlab.services.gitlab-nix.statePath}"
       RUNNER_TOKEN_ENV_FILE="${runnerTokenEnv}"
       AUTH_PAYLOAD_FILE="${authPayload}"
       CREATE_RUNNER_PAYLOAD_FILE="${createRunnerPayload}"

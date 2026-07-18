@@ -417,7 +417,7 @@ in
   };
 
   # Define the Gitlab Runner.
-  services.gitlab-runner.services.podman-runner = {
+  services.gitlab-nix-runner.services.podman-runner = {
     description = runnerConfig.desc;
 
     inherit registrationFlags;
