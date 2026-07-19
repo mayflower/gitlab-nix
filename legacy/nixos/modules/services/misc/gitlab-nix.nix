@@ -1914,6 +1914,6 @@ in
 
   };
 
-  meta.doc = ./gitlab.md;
+  meta.doc = ./gitlab-nix.md;
   meta.teams = [ teams.gitlab ];
 }
