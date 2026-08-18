@@ -1,4 +1,4 @@
-source = "github:NixOS/nixpkgs?rev=d57cfaf51dbf146e76095edc25908759516766c4"
+source = "github:NixOS/nixpkgs?rev=31dce4f408795aad7ca386b46adbd8897c5ef622"
 
 [[files]]
 path = "by-name/gi/gitaly/dont-clone-git-repo.patch"
@@ -14,7 +14,7 @@ sha256 = "10c77bc54857e052cacf8bdcc9433c031e343e2b4a3971b0b63fc25db622f291"
 
 [[files]]
 path = "by-name/gi/gitaly/package.nix"
-sha256 = "9176d10f4e7421d1b71010348bc89c45da4c9710feb2958a09375076be7b5c50"
+sha256 = "14ed442fb611cf1e0f0367f2932f136576a4bc9255c062556fef2da9e3cc8fc8"
 
 [[files]]
 path = "by-name/gi/gitlab-container-registry/fix-broken-urlcache-tests.diff"
@@ -26,7 +26,7 @@ sha256 = "bb77c873d33ba819dbbbcdfcdcd7fc9d947d6cf8bb92f91607421976b3cb169a"
 
 [[files]]
 path = "by-name/gi/gitlab/data.json"
-sha256 = "f79708cb6f2040dca2dd10c8326b2af698969c00b13b61a195bfcc0b8cddf4a1"
+sha256 = "1f76009a706ba1d21ffab296bbd3f13da67997d97a24ec2fcf97cd014686df3b"
 
 [[files]]
 path = "by-name/gi/gitlab-elasticsearch-indexer/code-parser.nix"
@@ -38,7 +38,7 @@ sha256 = "06e2762e5970bd582c9bbb8dec211a4737ecbbf359ef0aedfba4c3e3ec60948c"
 
 [[files]]
 path = "by-name/gi/gitlab/gitlab-workhorse/default.nix"
-sha256 = "57e38dc7cc7309b6edcc3e2021aaa4ee0bb60e1f7c859af4599cc158d618bfba"
+sha256 = "bb23876b0b00709a47bbb880897453560814c072e8114f18486b7006e80f2c53"
 
 [[files]]
 path = "by-name/gi/gitlab-kas/package.nix"
@@ -50,7 +50,7 @@ sha256 = "449275b43c8f6fb592714b95ac78e19002c549126a0275b4a937f9f79682ee68"
 
 [[files]]
 path = "by-name/gi/gitlab-pages/package.nix"
-sha256 = "cc542b820b262646d5a7998c41a37ab0fd48bf32970d0ba378952657a0a6d093"
+sha256 = "06ec0cc0948b827c08461eb1d5eaf2d97d3f07b4546be013c1d1a80dcb961cfd"
 
 [[files]]
 path = "by-name/gi/gitlab/remove-hardcoded-locations.patch"
