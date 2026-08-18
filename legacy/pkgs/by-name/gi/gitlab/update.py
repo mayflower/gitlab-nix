@@ -9,6 +9,7 @@ import subprocess
 import json
 import pathlib
 import tempfile
+import time
 from packaging.version import Version
 from typing import Iterable
 
@@ -105,7 +106,24 @@ class GitLabRepo:
         :param rev: the rev to fetch at
         :return:
         """
-        return requests.get(self.url + f"/raw/{rev}/{filepath}").text
+        url = self.url + f"/raw/{rev}/{filepath}"
+        attempts = 5
+        for attempt in range(1, attempts + 1):
+            r = requests.get(url)
+            if r.ok:
+                return r.text
+            # gitlab.com sporadically answers raw file requests with a 503
+            # "GitLab is not responding" HTML page. Retry those; a 4xx is final.
+            if r.status_code < 500 or attempt == attempts:
+                break
+            logger.warning(
+                f"GET {url} -> HTTP {r.status_code}, retry {attempt}/{attempts - 1}"
+            )
+            time.sleep(2**attempt)
+        raise RuntimeError(
+            f"GET {url} -> HTTP {r.status_code} ({len(r.content)} bytes); "
+            f"body starts with: {r.text[:200]!r}"
+        )
 
     def get_data(self, rev):
         version = self.rev2version(rev)
