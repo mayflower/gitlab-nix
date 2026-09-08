@@ -272,6 +272,9 @@ let
     ];
 
     patches = [
+      ./CVE-2026-15217.patch
+      ./CVE-2026-15216.patch
+
       # Since version 12.6.0, the rake tasks need the location of git,
       # so we have to apply the location patches here too.
       ./remove-hardcoded-locations.patch
@@ -371,6 +374,11 @@ stdenv.mkDerivation {
     ./remove-hardcoded-locations.patch
     # Backport the store-time path traversal check to GitLab 18.11.
     ./CVE-2026-10053.patch
+    ./CVE-2026-15217.patch
+    ./CVE-2026-15216.patch
+    ./CVE-2026-6267.patch
+    ./CVE-2026-12436.patch
+    ./CVE-2026-15975.patch
   ];
 
   postPatch = ''

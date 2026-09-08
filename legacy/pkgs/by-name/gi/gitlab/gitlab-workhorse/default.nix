@@ -22,6 +22,8 @@ buildGoModule (finalAttrs: {
 
   sourceRoot = "${finalAttrs.src.name}/workhorse";
 
+  patches = [ ../CVE-2026-6267-workhorse.patch ];
+
   vendorHash = "sha256-X1+neA2g61BR1VRKXzeqNath0+SYXRbU4vzEg1KD2sY=";
   buildInputs = [ git ];
   ldflags = [ "-X main.Version=${finalAttrs.version}" ];
