@@ -44,7 +44,7 @@ A basic configuration with some custom settings could look like this:
 
 ```nix
 {
-  services.gitlab = {
+  services.gitlab-nix = {
     enable = true;
     databasePasswordFile = "/var/keys/gitlab/db_password";
     initialRootPasswordFile = "/var/keys/gitlab/root_password";
@@ -83,26 +83,26 @@ secrets. You for instance use
 `tr -dc A-Za-z0-9 < /dev/urandom | head -c 128 > /var/keys/gitlab/db` to
 generate a new db secret. Make sure the files can be read by, and
 only by, the user specified by
-[services.gitlab.user](#opt-services.gitlab.user). GitLab
+[services.gitlab-nix.user](#opt-services.gitlab-nix.user). GitLab
 encrypts sensitive data stored in the database. If you're restoring
 an existing GitLab instance, you must specify the secrets secret
 from `config/secrets.yml` located in your GitLab
 state folder.
 
 When `incoming_mail.enabled` is set to `true`
-in [extraConfig](#opt-services.gitlab.extraConfig) an additional
+in [extraConfig](#opt-services.gitlab-nix.extraConfig) an additional
 service called `gitlab-mailroom` is enabled for fetching incoming mail.
 
 Refer to [](#ch-options) for all available configuration
-options for the [services.gitlab](#opt-services.gitlab.enable) module.
+options for the [services.gitlab-nix](#opt-services.gitlab-nix.enable) module.
 
 ## Maintenance {#module-services-gitlab-maintenance}
 
 ### Backups {#module-services-gitlab-maintenance-backups}
 
 Backups can be configured with the options in
-[services.gitlab.backup](#opt-services.gitlab.backup.keepTime). Use
-the [services.gitlab.backup.startAt](#opt-services.gitlab.backup.startAt)
+[services.gitlab-nix.backup](#opt-services.gitlab-nix.backup.keepTime). Use
+the [services.gitlab-nix.backup.startAt](#opt-services.gitlab-nix.backup.startAt)
 option to configure regular backups.
 
 To run a manual backup, start the `gitlab-backup` service:
@@ -134,7 +134,7 @@ configured executors
 ([`docker` (`podman`), or `shell` or `kubernetes`](https://docs.gitlab.com/runner/executors)).
 
 The
-[services.gitlab-runner.services](https://search.nixos.org/options?query=services.gitlab-runner.services)
+[services.gitlab-nix-runner.services](https://search.nixos.org/options?query=services.gitlab-nix-runner.services)
 documents a number of typical setups to configure multiple runners with
 different executors.
 
