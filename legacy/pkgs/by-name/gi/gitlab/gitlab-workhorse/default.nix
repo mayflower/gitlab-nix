@@ -10,7 +10,7 @@ in
 buildGoModule (finalAttrs: {
   pname = "gitlab-workhorse";
 
-  version = "18.11.11";
+  version = "19.2.4";
 
   # nixpkgs-update: no auto update
   src = fetchFromGitLab {
@@ -22,9 +22,7 @@ buildGoModule (finalAttrs: {
 
   sourceRoot = "${finalAttrs.src.name}/workhorse";
 
-  patches = [ ../CVE-2026-6267-workhorse.patch ];
-
-  vendorHash = "sha256-X1+neA2g61BR1VRKXzeqNath0+SYXRbU4vzEg1KD2sY=";
+  vendorHash = "sha256-mW58Kpn70N9zoMDzklsnouFf7NNKg8eW5MgRAXymfho=";
   buildInputs = [ git ];
   ldflags = [ "-X main.Version=${finalAttrs.version}" ];
   doCheck = false;

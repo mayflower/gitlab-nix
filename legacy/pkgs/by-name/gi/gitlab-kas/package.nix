@@ -7,17 +7,17 @@
 
 buildGoModule (finalAttrs: {
   pname = "gitlab-kas";
-  version = "18.11.11";
+  version = "18.6.3";
 
   # nixpkgs-update: no auto update
   src = fetchFromGitLab {
     owner = "gitlab-org";
     repo = "cluster-integration/gitlab-agent";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-k6E/In/hApKBhVQVXDQa6BPFyrh8iTCh/GiBZc2KPzU=";
+    hash = "sha256-crKzUQ+51hRgQsICES4tULyrRFw+hjWN9jz+lxYjtew=";
   };
 
-  vendorHash = "sha256-ZhtUUIF1WiJidi00+EjvJMwLdUqRgJuNlgNiNdGJPGk=";
+  vendorHash = "sha256-SSxQH45CVg1v8PKkbU046bAZsZOOPN5U7Cm81n82uRA=";
   subPackages = [ "./cmd/kas" ];
 
   ldflags =

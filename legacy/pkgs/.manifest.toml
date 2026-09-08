@@ -1,4 +1,4 @@
-source = "github:NixOS/nixpkgs?rev=31dce4f408795aad7ca386b46adbd8897c5ef622"
+source = "github:NixOS/nixpkgs?rev=12cd579ddd77fcece28b69ca1f5faae91e8afc10"
 
 [[files]]
 path = "by-name/gi/gitaly/dont-clone-git-repo.patch"
@@ -6,7 +6,7 @@ sha256 = "4f3ad80e14199cd2e0c9598e4225c5087db6133a3b234d8283e6f6920b756d62"
 
 [[files]]
 path = "by-name/gi/gitaly/git-data.json"
-sha256 = "615df753e1738790d0d2acef41b85dc2669d31d8df94ec858caf150fe2a3362b"
+sha256 = "5a1e52c45e0a973f3f7b7e43726ca77ddd4ec27a464abb3724024d513eed5fed"
 
 [[files]]
 path = "by-name/gi/gitaly/git.nix"
@@ -14,7 +14,7 @@ sha256 = "10c77bc54857e052cacf8bdcc9433c031e343e2b4a3971b0b63fc25db622f291"
 
 [[files]]
 path = "by-name/gi/gitaly/package.nix"
-sha256 = "14ed442fb611cf1e0f0367f2932f136576a4bc9255c062556fef2da9e3cc8fc8"
+sha256 = "a2d15aea8cc8a63214e1f28b85cffa624edc38befc09e4be51e88236069e744e"
 
 [[files]]
 path = "by-name/gi/gitlab-container-registry/fix-broken-urlcache-tests.diff"
@@ -22,11 +22,11 @@ sha256 = "71965fcd83cd055169a3c4f4f556f453b7e8a4d7285c7359ea72f75cede07f12"
 
 [[files]]
 path = "by-name/gi/gitlab-container-registry/package.nix"
-sha256 = "bb77c873d33ba819dbbbcdfcdcd7fc9d947d6cf8bb92f91607421976b3cb169a"
+sha256 = "7380fab5f54a56b84672997a126e539a58a56bf5ba6f8e30a0bd1454090e3fb5"
 
 [[files]]
 path = "by-name/gi/gitlab/data.json"
-sha256 = "1f76009a706ba1d21ffab296bbd3f13da67997d97a24ec2fcf97cd014686df3b"
+sha256 = "1fec4d99afee86055cbb8dd0dcfc68d02361f72cd6dbf0415d031cc1597d760a"
 
 [[files]]
 path = "by-name/gi/gitlab-elasticsearch-indexer/code-parser.nix"
@@ -38,7 +38,7 @@ sha256 = "06e2762e5970bd582c9bbb8dec211a4737ecbbf359ef0aedfba4c3e3ec60948c"
 
 [[files]]
 path = "by-name/gi/gitlab/gitlab-workhorse/default.nix"
-sha256 = "bb23876b0b00709a47bbb880897453560814c072e8114f18486b7006e80f2c53"
+sha256 = "b00a383e3a05ca7764679d44fa7237c6a950b4f3dec1e798a183e19e01bb7280"
 
 [[files]]
 path = "by-name/gi/gitlab-kas/package.nix"
@@ -46,11 +46,11 @@ sha256 = "f523898945dfd8d1c254aa2fe7c995ca8e75588fa2288597b4bc1d15a2b832db"
 
 [[files]]
 path = "by-name/gi/gitlab/package.nix"
-sha256 = "449275b43c8f6fb592714b95ac78e19002c549126a0275b4a937f9f79682ee68"
+sha256 = "7b8d15367cbe7a6537f3a09cb344d89565b72fc6427edbbe882efba85318a5d8"
 
 [[files]]
 path = "by-name/gi/gitlab-pages/package.nix"
-sha256 = "06ec0cc0948b827c08461eb1d5eaf2d97d3f07b4546be013c1d1a80dcb961cfd"
+sha256 = "1ba923a304ef65c2969554e3fb5093bd54e97c9c43a521a00f49b8f8b54da9bd"
 
 [[files]]
 path = "by-name/gi/gitlab/remove-hardcoded-locations.patch"
@@ -66,15 +66,15 @@ sha256 = "1438e7ae724db0cf70b310b9f712f923f9ea9804da486eb1c97ba7fbe4e3d8d4"
 
 [[files]]
 path = "by-name/gi/gitlab/rubyEnv/Gemfile"
-sha256 = "f105551773d301749d09c309b29d0f453418f9e468e254b22799731817569638"
+sha256 = "95626f99f71461961ed53e8e578bf7e3ee63b02dea4840e852807fe356a3d78e"
 
 [[files]]
 path = "by-name/gi/gitlab/rubyEnv/Gemfile.lock"
-sha256 = "e32f8c33782727466290a3e5dbef54a065f45ae6f4f7904e28cd3639c6f75bc1"
+sha256 = "79d9f52d310a1892924928589d04164249f5ff9c8ec044bb79be1abfe079a8b7"
 
 [[files]]
 path = "by-name/gi/gitlab/rubyEnv/gemset.nix"
-sha256 = "31d9deec09bb77093fb337ca334cdeb0036f885c19d92e2e2c614e394d416a13"
+sha256 = "970f5c2f3723c90c5060f22147d8305670688950ad6fec820f54de9e394443d1"
 
 [[files]]
 path = "by-name/gi/gitlab-runner/fix-shell-path.patch"
@@ -90,7 +90,7 @@ sha256 = "808932573abd56222af97df62b2b08d5824c2ad17285ec56d51381e257987a9a"
 
 [[files]]
 path = "by-name/gi/gitlab-shell/package.nix"
-sha256 = "ce05c9fa1bfaa4f4c52787ec0487ff19f34baf9f894e5021997a46ed8140f48a"
+sha256 = "d5be97d0f37ac35b6f2eb0d884489e082b9dab758ad5cc6ea77aa4b62093de32"
 
 [[files]]
 path = "by-name/gi/gitlab-shell/remove-hardcoded-locations.patch"
