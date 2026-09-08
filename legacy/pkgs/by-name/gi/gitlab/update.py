@@ -9,6 +9,7 @@ import subprocess
 import json
 import pathlib
 import tempfile
+import time
 from packaging.version import Version
 from typing import Iterable
 
@@ -35,7 +36,10 @@ class GitLabRepo:
     @property
     def tags(self) -> Iterable[str]:
         """Returns a sorted list of repository tags"""
-        r = requests.get(self.url + "/refs?sort=updated_desc&ref=master").json()
+        url = self.url + "/refs?sort=updated_desc&ref=master"
+        if getattr(self, "search", None):
+            url += f"&search={self.search}"
+        r = requests.get(url).json()
         tags = r.get("Tags", [])
 
         # filter out versions not matching version_regex
@@ -102,7 +106,24 @@ class GitLabRepo:
         :param rev: the rev to fetch at
         :return:
         """
-        return requests.get(self.url + f"/raw/{rev}/{filepath}").text
+        url = self.url + f"/raw/{rev}/{filepath}"
+        attempts = 5
+        for attempt in range(1, attempts + 1):
+            r = requests.get(url)
+            if r.ok:
+                return r.text
+            # gitlab.com sporadically answers raw file requests with a 503
+            # "GitLab is not responding" HTML page. Retry those; a 4xx is final.
+            if r.status_code < 500 or attempt == attempts:
+                break
+            logger.warning(
+                f"GET {url} -> HTTP {r.status_code}, retry {attempt}/{attempts - 1}"
+            )
+            time.sleep(2**attempt)
+        raise RuntimeError(
+            f"GET {url} -> HTTP {r.status_code} ({len(r.content)} bytes); "
+            f"body starts with: {r.text[:200]!r}"
+        )
 
     def get_data(self, rev):
         version = self.rev2version(rev)
@@ -337,6 +358,23 @@ def get_container_registry_version() -> str:
     ).decode("utf-8")
 
 
+def get_gitlab_runner_version() -> str:
+    """Returns the version attribute of gitlab-runner"""
+    return subprocess.check_output(
+        [
+            "nix",
+            "--experimental-features",
+            "nix-command",
+            "eval",
+            "-f",
+            ".",
+            "--raw",
+            "gitlab-runner.version",
+        ],
+        cwd=NIXPKGS_PATH,
+    ).decode("utf-8")
+
+
 @cli.command("update-gitlab-shell")
 def update_gitlab_shell():
     """Update gitlab-shell"""
@@ -355,6 +393,16 @@ def update_gitlab_workhorse():
     _call_nix_update("gitlab-workhorse", gitlab_workhorse_version)
 
 
+def omnibus_container_registry_version(rev: str):
+    repo = GitLabRepo(repo="omnibus-gitlab")
+    repo.version_regex = re.compile(r"^\d+\.\d+\.\d+\+ee\.\d+")
+    version = repo.rev2version(rev)
+    repo.search = f"{version}*ee"
+    rev = next(filter(lambda x: x.startswith(version), repo.tags))
+    config = repo.get_file('config/software/registry.rb', rev)
+    return re.compile(r"v\d+\.\d+\.\d+\-gitlab").search(config)[0]
+
+
 @cli.command("update-gitlab-container-registry")
 @click.option("--rev", default="latest", help="The rev to use (vX.Y.Z-ee), or 'latest'")
 @click.option(
@@ -368,13 +416,49 @@ def update_gitlab_container_registry(rev: str, commit: bool):
 
     if rev == "latest":
         rev = next(filter(lambda x: not ("rc" in x or x.endswith("pre")), repo.tags))
+    else:
+        rev = omnibus_container_registry_version(rev)
 
     version = repo.rev2version(rev)
+    pkg = NIXPKGS_PATH / "pkgs/by-name/gi/gitlab-container-registry/package.nix"
+    pkg.write_text(
+        re.sub(r'rev = "v\$\{version\}-[^"]+";',
+               'rev = "v${version}-gitlab";', pkg.read_text())
+    )
     _call_nix_update("gitlab-container-registry", version)
     if commit:
         new_container_registry_version = get_container_registry_version()
         commit_container_registry(
             old_container_registry_version, new_container_registry_version
+        )
+
+
+@cli.command("update-gitlab-runner")
+@click.option("--rev", default="latest", help="The rev to use (vX.Y.Z-ee), or 'latest'")
+@click.option(
+    "--commit", is_flag=True, default=False, help="Commit the changes for you"
+)
+def update_gitlab_runner(rev: str, commit: bool):
+    """Update gitlab-runner"""
+    logger.info("Updating gitlab-runner")
+    repo = GitLabRepo(repo="gitlab-runner")
+    old_gitlab_runner_version = get_gitlab_runner_version()
+
+    if rev == "latest":
+        rev = next(filter(lambda x: not ("rc" in x or x.endswith("pre")), repo.tags))
+    else:
+        parts = repo.rev2version(rev).split('.')
+        major, minor, patch = parts[0], parts[1], parts[2]
+        repo.search = f"v{major}.{minor}.*"
+        upper = Version(f"{major}.{minor}.{patch}")
+        rev = next(filter(lambda x: Version(x) <= upper and not ("rc" in x or x.endswith("pre")), repo.tags))
+
+    version = repo.rev2version(rev)
+    _call_nix_update("gitlab-runner", version)
+    if commit:
+        new_gitlab_runner_version = get_gitlab_runner_version()
+        commit_gitlab_runner(
+            old_gitlab_runner_version, new_gitlab_runner_version
         )
 
 
@@ -418,7 +502,6 @@ def update_gitlab_elasticsearch_indexer():
 def update_all(ctx, rev: str, commit: bool):
     """Update all gitlab components to the latest stable release"""
     old_data_json = _get_data_json()
-    old_container_registry_version = get_container_registry_version()
 
     ctx.invoke(update_data, rev=rev)
 
@@ -427,6 +510,7 @@ def update_all(ctx, rev: str, commit: bool):
     ctx.invoke(update_rubyenv)
     ctx.invoke(update_gitaly)
     ctx.invoke(update_gitlab_pages)
+    ctx.invoke(update_gitlab_kas)
     ctx.invoke(update_gitlab_shell)
     ctx.invoke(update_gitlab_workhorse)
     ctx.invoke(update_gitlab_elasticsearch_indexer)
@@ -435,12 +519,8 @@ def update_all(ctx, rev: str, commit: bool):
             old_data_json["version"], new_data_json["version"], new_data_json["rev"]
         )
 
-    ctx.invoke(update_gitlab_container_registry)
-    if commit:
-        new_container_registry_version = get_container_registry_version()
-        commit_container_registry(
-            old_container_registry_version, new_container_registry_version
-        )
+    ctx.invoke(update_gitlab_container_registry, rev=rev, commit=commit)
+    ctx.invoke(update_gitlab_runner, rev=rev, commit=commit)
 
 
 def commit_gitlab(old_version: str, new_version: str, new_rev: str) -> None:
@@ -485,6 +565,27 @@ def commit_container_registry(old_version: str, new_version: str) -> None:
             "commit",
             "--message",
             f"gitlab-container-registry: {old_version} -> {new_version}\n\nhttps://gitlab.com/gitlab-org/container-registry/-/blob/v{new_version}-gitlab/CHANGELOG.md",
+        ],
+        cwd=NIXPKGS_PATH,
+    )
+
+
+def commit_gitlab_runner(old_version: str, new_version: str) -> None:
+    """Commits the gitlab-runner changes for you"""
+    subprocess.run(
+        [
+            "git",
+            "add",
+            "pkgs/by-name/gi/gitlab-runner"
+        ],
+        cwd=NIXPKGS_PATH,
+    )
+    subprocess.run(
+        [
+            "git",
+            "commit",
+            "--message",
+            f"gitlab-runner: {old_version} -> {new_version}\n\nhttps://gitlab.com/gitlab-org/gitlab-runner/-/blob/v{new_version}/CHANGELOG.md",
         ],
         cwd=NIXPKGS_PATH,
     )
