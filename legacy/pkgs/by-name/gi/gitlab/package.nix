@@ -369,6 +369,8 @@ stdenv.mkDerivation {
   patches = [
     # Change hardcoded paths to the NixOS equivalent
     ./remove-hardcoded-locations.patch
+    # Backport the store-time path traversal check to GitLab 18.11.
+    ./CVE-2026-10053.patch
   ];
 
   postPatch = ''
