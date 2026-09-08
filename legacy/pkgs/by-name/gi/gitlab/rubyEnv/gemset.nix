@@ -2025,10 +2025,10 @@ src: {
     platforms = [ ];
     source = {
       remotes = [ "https://rubygems.org" ];
-      sha256 = "09f5sq41fb912jxsbzh68hmkwq9gj9p8fg0zbwikf80sxsjkz105";
+      sha256 = "0mwg9xa0v45c9yh36nigj09pscrf0npn681r2wn9glzh943fkf6d";
       type = "gem";
     };
-    version = "0.2.0";
+    version = "0.4.0";
   };
   email_spec = {
     dependencies = [
