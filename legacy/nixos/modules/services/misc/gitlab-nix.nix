@@ -1198,6 +1198,10 @@ in
 
     assertions = [
       {
+        assertion = !(config.services.gitlab.enable or false);
+        message = "services.gitlab-nix and services.gitlab cannot be enabled simultaneously.";
+      }
+      {
         assertion = databaseActuallyCreateLocally -> (cfg.user == cfg.databaseUsername);
         message = ''For local automatic database provisioning (services.gitlab-nix.databaseCreateLocally == true) with peer authentication (services.gitlab-nix.databaseHost == "") to work services.gitlab-nix.user and services.gitlab-nix.databaseUsername must be identical.'';
       }
