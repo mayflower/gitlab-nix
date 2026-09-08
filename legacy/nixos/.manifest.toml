@@ -1,12 +1,12 @@
-source = "github:NixOS/nixpkgs?rev=31dce4f408795aad7ca386b46adbd8897c5ef622"
+source = "github:NixOS/nixpkgs?rev=12cd579ddd77fcece28b69ca1f5faae91e8afc10"
 
 [[files]]
-src = "nixos/modules/services/misc/gitlab.nix"
+src = "nixos/modules/services/misc/gitlab/default.nix"
 dst = "modules/services/misc/gitlab-nix.nix"
-sha256 = "b33c7e1a2be71b7241b6e85629cafaf3233a1c1170e19a3c4d5bb73940b450aa"
+sha256 = "916db28216eb90762b153eef9ea806d35d0d8118f0757f75eb4505944351371e"
 
 [[files]]
-src = "nixos/modules/services/misc/gitlab.md"
+src = "nixos/modules/services/misc/gitlab/default.md"
 dst = "modules/services/misc/gitlab-nix.md"
 sha256 = "34f59c844326e9a06e979518a8c6a9ce1624343c4e4b1a838fe41706359a6306"
 
@@ -18,12 +18,12 @@ sha256 = "637cb5ca2899947950f86502ef03ba4094094a67e505ed91bfe640021823d502"
 [[files]]
 src = "nixos/tests/gitlab/gitlab.nix"
 dst = "tests/gitlab/gitlab.nix"
-sha256 = "43dde0af5d39ee1ee5b1359ec9ea95434c03ea8e3c7b940bc071f9de1d258751"
+sha256 = "0094ca7b44d279eec2bee6e11d1be613f06f7cc992deaef6a50b61e760104b2b"
 
 [[files]]
 src = "nixos/tests/gitlab/runner.nix"
 dst = "tests/gitlab/runner.nix"
-sha256 = "f8c25f0f3fe34464edd07aff96a3a79e23747db35a0fecaeec61758f2a3a2461"
+sha256 = "7126c4f1f4b16a4d101b1249b10ba3c1c2625fcd3c5b855ef10c18aed29c2792"
 
 [[files]]
 src = "nixos/tests/gitlab/runner/podman-runner/default.nix"
@@ -123,7 +123,7 @@ sha256 = "d3bdfa51ba41b98a25aefb3d3fa28eb1fcf66dc23a0fd39b9cca857f6a1e48e0"
 [[files]]
 src = "nixos/tests/gitlab/runner_test.py"
 dst = "tests/gitlab/runner_test.py"
-sha256 = "be5efbfb92df10530107b03a549f7424b203714e7de38cc71246b97f9bce3bac"
+sha256 = "a16abb75ebbd5326487e9d17605588bb6b3d689ee374ba7b5de78e88f7b1e192"
 
 [[files]]
 src = "nixos/tests/ssh-keys.nix"
