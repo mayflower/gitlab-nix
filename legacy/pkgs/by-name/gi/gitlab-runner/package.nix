@@ -12,16 +12,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "gitlab-runner";
-  version = "19.0.0";
+  version = "19.3.2";
 
   src = fetchFromGitLab {
     owner = "gitlab-org";
     repo = "gitlab-runner";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-uScTzj4pSRtSFCMxoOR5KqipCbPknwnydPYG6xU5dOo=";
+    hash = "sha256-c9Ize6TlhlBUS6+KRulqPdqxCnxYDF4YKOpdinOvtHs=";
   };
 
-  vendorHash = "sha256-QqqTkIgR9ca1dYQ32SG7C+SpEIA07Hlf8x3lVhZ5vRQ=";
+  vendorHash = "sha256-wuzVFCBOr3Lkh+d8yTvSXKrgv2HzIIRFBSaIO34EvQQ=";
 
   # For patchShebangs
   buildInputs = [ bash ];
@@ -73,7 +73,27 @@ buildGoModule (finalAttrs: {
   '';
 
   postPatch = ''
-    patchShebangs --build helpers/docker/auth/testdata/docker-credential-bin.sh
+    # 19.3 added docker-credential-{listonly,token}.sh and pinned/
+    # docker-credential-pinned.sh next to docker-credential-bin.sh. All carry
+    # "#!/usr/bin/env bash", which does not resolve in the sandbox, so the
+    # credential-helper tests fail with "fork/exec ...: no such file or
+    # directory". Patch the whole directory instead of naming one file, so
+    # further additions are covered too.
+    patchShebangs --build helpers/docker/auth/testdata
+  ''
+  # The kubernetes executor tests added in 19.3 execute the generated container
+  # command for real. It begins with the runner's BashDetectShellScript, which
+  # probes absolute paths and execs the first that exists: /usr/local/bin/bash,
+  # /usr/bin/bash, /bin/bash, then the sh variants. No bash path exists in the
+  # build sandbox and its root is read-only, so the script falls through to
+  # /bin/sh (BusyBox ash). That reports exit 2 for a script it cannot open where
+  # bash reports 127, and the test asserts 127. Point the test's own detect
+  # script at a real bash so it exercises the bash pipe/exit-status semantics it
+  # is about, instead of the sh fallback. Guarded by the same condition under
+  # which prePatch removes this test file entirely.
+  + lib.optionalString stdenv.buildPlatform.isx86_64 ''
+    substituteInPlace executors/kubernetes/kubernetes_test.go \
+      --replace-fail '[]byte(shells.BashDetectShellScript)' '[]byte("exec ${bash}/bin/bash \"$@\"\n")'
   '';
 
   excludedPackages = [
