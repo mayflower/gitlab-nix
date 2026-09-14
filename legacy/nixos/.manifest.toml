@@ -1,4 +1,4 @@
-source = "github:NixOS/nixpkgs?rev=12cd579ddd77fcece28b69ca1f5faae91e8afc10"
+source = "github:NixOS/nixpkgs?rev=21a67dc470149f337cecafbe965d8d252a390518"
 
 [[files]]
 src = "nixos/modules/services/misc/gitlab/default.nix"
