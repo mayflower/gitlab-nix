@@ -1,9 +1,9 @@
-source = "github:NixOS/nixpkgs?rev=21a67dc470149f337cecafbe965d8d252a390518"
+source = "github:NixOS/nixpkgs?rev=4af129a318b4bc89f8653c45489c0bdeb008caf9"
 
 [[files]]
 src = "nixos/modules/services/misc/gitlab/default.nix"
 dst = "modules/services/misc/gitlab-nix.nix"
-sha256 = "916db28216eb90762b153eef9ea806d35d0d8118f0757f75eb4505944351371e"
+sha256 = "06ae84432f68bef618ed89a9c3e299af03e55972a9a87ab0e67cabf9dc303166"
 
 [[files]]
 src = "nixos/modules/services/misc/gitlab/default.md"
