@@ -1530,7 +1530,7 @@ in
           ln -sf ${cableYml} ${cfg.statePath}/config/cable.yml
           ln -sf ${resqueYml} ${cfg.statePath}/config/resque.yml
 
-          ${cfg.packages.gitlab-shell}/support/make_necessary_dirs
+          ${cfg.packages.gitlab.rubyEnv.wrappedRuby}/bin/ruby ${cfg.packages.gitlab-shell}/support/make_necessary_dirs
 
           ${optionalString cfg.smtp.enable ''
             install -m u=rw ${smtpSettings} ${cfg.statePath}/config/initializers/smtp_settings.rb
@@ -1671,7 +1671,8 @@ in
       ]
       ++ (with pkgs; [
         postgresqlPackage
-        ruby
+        # gitlab's own (patched) ruby and bundle, like omnibus' embedded/bin
+        cfg.packages.gitlab.rubyEnv.wrappedRuby
         openssh
         nodejs
         gnupg
