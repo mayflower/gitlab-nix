@@ -12,16 +12,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "gitlab-runner";
-  version = "19.4.1";
+  version = "19.0.0";
 
   src = fetchFromGitLab {
     owner = "gitlab-org";
     repo = "gitlab-runner";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-BetDYYcp7nio9/FzRiqMRaSOzrWZxtZh+EoFjJeao7U=";
+    hash = "sha256-uScTzj4pSRtSFCMxoOR5KqipCbPknwnydPYG6xU5dOo=";
   };
 
-  vendorHash = "sha256-cyPaakUMBHjLyN+MuD+rgf4O2tI5va4C1otj3eHBNGM=";
+  vendorHash = "sha256-QqqTkIgR9ca1dYQ32SG7C+SpEIA07Hlf8x3lVhZ5vRQ=";
 
   # For patchShebangs
   buildInputs = [ bash ];
@@ -73,17 +73,7 @@ buildGoModule (finalAttrs: {
   '';
 
   postPatch = ''
-    # 19.3+ ships more credential-helper scripts here; patch them all
-    patchShebangs --build helpers/docker/auth/testdata
-
-    # no resolver in the sandbox: the lookup fails with "connection refused", not NXDOMAIN
-    substituteInPlace commands/helpers/probe_url_test.go \
-      --replace-fail 'wantErr: "no such host",' 'wantErr: "lookup nonexistent.invalid",'
-  ''
-  # the k8s test runs BashDetectShellScript, which falls back to busybox sh in the sandbox
-  + lib.optionalString stdenv.buildPlatform.isx86_64 ''
-    substituteInPlace executors/kubernetes/kubernetes_test.go \
-      --replace-fail '[]byte(shells.BashDetectShellScript)' '[]byte("exec ${bash}/bin/bash \"$@\"\n")'
+    patchShebangs --build helpers/docker/auth/testdata/docker-credential-bin.sh
   '';
 
   excludedPackages = [
