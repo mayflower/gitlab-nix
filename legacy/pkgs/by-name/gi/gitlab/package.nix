@@ -12,7 +12,8 @@
   net-tools,
   nixosTests,
   nodejs_22,
-  ruby_3_3,
+  mkRuby,
+  mkRubyVersion,
   stdenv,
   tzdata,
 
@@ -52,9 +53,24 @@ let
     hash = data.repo_hash;
   };
 
+  # omnibus' Ruby: 3.3.12 plus its regexp patches (CVE-2026-97229)
+  ruby =
+    (mkRuby {
+      version = mkRubyVersion "3" "3" "12" "";
+      hash = "sha256-sG1jvq4nGTMDPifwo4m8WCoAnnhFNX1ENlw53lJaBRs=";
+      cargoHash = "sha256-xE7Cv+NVmOHOlXa/Mg72CTSaZRb72lOja98JBvxPvSs=";
+    }).overrideAttrs
+      (old: {
+        patches = old.patches ++ [
+          ./ruby-patches/regexp-repeat-range-double-free-3.3.patch
+          ./ruby-patches/regexp-program-size-3.3.patch
+          ./ruby-patches/regexp-repeat-id-overflow-3.3.patch
+        ];
+      });
+
   rubyEnv = bundlerEnv rec {
     name = "gitlab-env-${version}";
-    ruby = ruby_3_3;
+    inherit ruby;
     gemdir = ./rubyEnv;
     gemset = import (gemdir + "/gemset.nix") src;
     gemConfig = defaultGemConfig // {
