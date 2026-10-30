@@ -1,6 +1,6 @@
 # gitlab-nix
 
-Nix flake for GitLab EE packages and NixOS modules, pinned to specific GitLab
+Nix flake for GitLab CE packages and NixOS modules, pinned to specific GitLab
 versions.
 
 > This is primarily an internal tool for Mayflower's GitLab. It is public as a
@@ -32,7 +32,7 @@ Tags are never moved.
 
 ```nix
 # flake.nix
-inputs.gitlab-nix.url = "github:mayflower/gitlab-nix/19.4.3+legacy.1";
+inputs.gitlab-nix.url = "github:mayflower/gitlab-nix/19.4.3+legacy.2";
 
 # NixOS configuration
 imports = [ inputs.gitlab-nix.nixosModules.default ];
