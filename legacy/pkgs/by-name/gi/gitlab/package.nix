@@ -53,20 +53,12 @@ let
     hash = data.repo_hash;
   };
 
-  # omnibus' Ruby: 3.3.12 plus its regexp patches (CVE-2026-97229)
-  ruby =
-    (mkRuby {
-      version = mkRubyVersion "3" "3" "12" "";
-      hash = "sha256-sG1jvq4nGTMDPifwo4m8WCoAnnhFNX1ENlw53lJaBRs=";
-      cargoHash = "sha256-xE7Cv+NVmOHOlXa/Mg72CTSaZRb72lOja98JBvxPvSs=";
-    }).overrideAttrs
-      (old: {
-        patches = old.patches ++ [
-          ./ruby-patches/regexp-repeat-range-double-free-3.3.patch
-          ./ruby-patches/regexp-program-size-3.3.patch
-          ./ruby-patches/regexp-repeat-id-overflow-3.3.patch
-        ];
-      });
+  # 3.3.13 ships omnibus' regexp patches upstream (CVE-2026-97229)
+  ruby = mkRuby {
+    version = mkRubyVersion "3" "3" "13" "";
+    hash = "sha256-TK5y6XG9HNsgyofSmRERgkF8UnbBYt6OrQqwUxQmzWE=";
+    cargoHash = "sha256-xE7Cv+NVmOHOlXa/Mg72CTSaZRb72lOja98JBvxPvSs=";
+  };
 
   rubyEnv = bundlerEnv rec {
     name = "gitlab-env-${version}";
