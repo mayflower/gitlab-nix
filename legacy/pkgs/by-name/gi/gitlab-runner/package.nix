@@ -3,25 +3,43 @@
   stdenv,
   bash,
   buildGoModule,
+  buildPackages,
   fetchFromGitLab,
+  fetchurl,
   gitMinimal,
   nix-update-script,
   versionCheckHook,
   writableTmpDirAsHomeHook,
 }:
 
-buildGoModule (finalAttrs: {
+let
+  # Weiche: go.mod of gitlab-runner 19.5.4 requires go >= 1.26.11, the pinned nixpkgs ships 1.26.10.
+  # Inert once nixpkgs' go reaches goMin; source hash from nixpkgs 1ab25dfa (go_1_26: 1.26.10 -> 1.26.11).
+  goMin = "1.26.11";
+  go =
+    if lib.versionAtLeast buildPackages.go.version goMin then
+      buildPackages.go
+    else
+      buildPackages.go.overrideAttrs {
+        version = goMin;
+        src = fetchurl {
+          url = "https://go.dev/dl/go${goMin}.src.tar.gz";
+          hash = "sha256-1EEBsP8n7SpMda1GwXucdDWSCeLrLKfJ32y0/baOGWk=";
+        };
+      };
+in
+(buildGoModule.override { inherit go; }) (finalAttrs: {
   pname = "gitlab-runner";
-  version = "19.5.3";
+  version = "19.5.4";
 
   src = fetchFromGitLab {
     owner = "gitlab-org";
     repo = "gitlab-runner";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-O7HAmoF3b3RdWgfxN+R6zgyvyidTwqzpV7xZd+CIBpU=";
+    hash = "sha256-Mm6YOdAW5zsudM906twyCMNz50ZGbzs6ZKxtYOA+jc0=";
   };
 
-  vendorHash = "sha256-Op1yK76t/v6zNn0D7hAf8QDdRPK0VcQP0Voy8Zt8J7c=";
+  vendorHash = "sha256-g2qHz7c7E4V/+Q0DUoLdFuQmxnShOJS7GWi1YEETgSw=";
 
   # For patchShebangs
   buildInputs = [ bash ];
@@ -80,6 +98,8 @@ buildGoModule (finalAttrs: {
     "./helpers/runner_wrapper/api"
     # Helper scripts for upstream Make targets, not intended for downstream consumers
     "./scripts"
+    # Only an integration test behind `integration && network_faults` build tags (new in 19.5.4)
+    "./executors/docker/networkfaults"
   ];
 
   ldflags =
