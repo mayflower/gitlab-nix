@@ -27,6 +27,7 @@
   buildPackages,
 
   # gpgme
+  gpgme,
   pkg-config,
 
   # openssl
@@ -52,6 +53,11 @@ let
     hash = data.repo_hash;
   };
 
+  # omnibus security !534 (8d56df36): gpg engine double free, upstream gpgme 14499348 (>= 2.3.1).
+  gpgmePatched = gpgme.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [ ./gpgme-patches/fix-double-free-in-read-status.patch ];
+  });
+
   rubyEnv = bundlerEnv rec {
     name = "gitlab-env-${version}";
     ruby = ruby_3_3;
@@ -59,7 +65,9 @@ let
     gemset = import (gemdir + "/gemset.nix") src;
     gemConfig = defaultGemConfig // {
       gpgme = attrs: {
+        buildInputs = [ gpgmePatched ];
         nativeBuildInputs = [ pkg-config ];
+        buildFlags = [ "--use-system-libraries" ];
       };
       # the openssl needs the openssl include files
       openssl = attrs: {

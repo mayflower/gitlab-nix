@@ -1,0 +1,70 @@
+From f6f0cccb04bf49fb05908196157eee2e1448a970 Mon Sep 17 00:00:00 2001
+Message-ID: <f6f0cccb04bf49fb05908196157eee2e1448a970.1794847212.git.stanhu@gmail.com>
+From: Stan Hu <stanhu@gmail.com>
+Date: Mon, 16 Nov 2026 08:40:12 -0800
+Subject: [PATCH] core: Fix double free of the status and colon buffers.
+
+* src/engine-gpg.c (read_status): Store the reallocated buffer and
+size in the engine object right after realloc, before any early
+return.
+(read_colon_line): Ditto.
+--
+
+read_status and read_colon_line keep a local copy of the engine's
+status/colon buffer pointer, grow it with realloc, and only write the
+new pointer back to the engine object at the very end of the function.
+
+realloc may move the block, which frees the old one.  Several code
+paths between the realloc and that write-back return early, for example
+when a status or preprocess callback returns an error.  On those paths
+the engine's buffer field is left pointing at the already-freed old
+block.  The reallocated block leaks, and the stale pointer is freed a
+second time when the engine is released, giving a double free.
+
+The status buffer is grown from attacker-controlled gpg status output,
+so the double free is reachable by feeding a crafted OpenPGP signature
+to gpgme_op_verify, and likewise via key import and listing.
+
+Fixed upstream as GnuPG T8557 (https://dev.gnupg.org/T8557).
+
+Signed-off-by: Stan Hu <stan@gitlab.com>
+---
+ src/engine-gpg.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/src/engine-gpg.c b/src/engine-gpg.c
+index eea97bc..7d0c7cd 100644
+--- a/src/engine-gpg.c
++++ b/src/engine-gpg.c
+@@ -1494,6 +1494,15 @@ read_status (engine_gpg_t gpg)
+       buffer = realloc (buffer, bufsize);
+       if (!buffer)
+ 	return gpg_error_from_syserror ();
++      /* Write the reallocated pointer and size back immediately.  The
++         block may have moved, freeing the old one, and several of the
++         code paths below return early (e.g. on a callback error)
++         without reaching the update at the end of this function.  If we
++         did not store the new pointer now, gpg->status.buffer would be
++         left pointing at the already-freed old block and freed a second
++         time during cleanup.  */
++      gpg->status.buffer = buffer;
++      gpg->status.bufsize = bufsize;
+     }
+ 
+   nread = _gpgme_io_read (gpg->status.fd[0],
+@@ -1647,6 +1656,12 @@ read_colon_line (engine_gpg_t gpg)
+       buffer = realloc (buffer, bufsize);
+       if (!buffer)
+ 	return gpg_error_from_syserror ();
++      /* Write the reallocated pointer and size back immediately; see the
++         matching comment in read_status.  A preprocess callback below
++         can return early, so leaving the stale pointer in
++         gpg->colon.buffer would cause a double free during cleanup.  */
++      gpg->colon.buffer = buffer;
++      gpg->colon.bufsize = bufsize;
+     }
+ 
+   nread = _gpgme_io_read (gpg->colon.fd[0], buffer+readpos, bufsize-readpos);
+-- 
+2.52.0
+
